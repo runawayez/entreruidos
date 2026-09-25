@@ -146,21 +146,51 @@ function renderEpisodes(items) {
   });
 }
 
+function firstTextByTag(item, names) {
+  for (const name of names) {
+    const node = item.getElementsByTagName(name)[0];
+    if (node?.textContent) return node.textContent.trim();
+  }
+
+  // Fallback para tags com namespace, caso o navegador normalize o prefixo.
+  for (const node of item.getElementsByTagName("*")) {
+    const localName = (node.localName || "").toLowerCase();
+    if (names.some(name => name.split(":").pop().toLowerCase() === localName) && node.textContent) {
+      return node.textContent.trim();
+    }
+  }
+  return "";
+}
+
+function parseRss(xmlText) {
+  const xml = new DOMParser().parseFromString(xmlText, "application/xml");
+  if (xml.querySelector("parsererror")) throw new Error("RSS inválido");
+
+  return Array.from(xml.getElementsByTagName("item")).map(item => {
+    const enclosure = item.getElementsByTagName("enclosure")[0];
+    return {
+      title: firstTextByTag(item, ["title"]),
+      description: firstTextByTag(item, ["content:encoded", "description"]),
+      date: firstTextByTag(item, ["pubDate"]),
+      duration: firstTextByTag(item, ["itunes:duration", "duration"]),
+      audio: enclosure?.getAttribute("url") || "",
+    };
+  });
+}
+
 async function loadFeed() {
   try {
-    const endpoint = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(CONFIG.rssUrl)}`;
-    const response = await fetch(endpoint);
+    // A própria Vercel faz o proxy do RSS. O timestamp + cache:no-store evita
+    // que uma navegação reaproveite uma resposta antiga do navegador/CDN.
+    const response = await fetch(`/api/rss?t=${Date.now()}`, { cache: "no-store" });
     if (!response.ok) throw new Error("Falha ao carregar RSS");
-    const data = await response.json();
-    if (data.status !== "ok" || !Array.isArray(data.items)) throw new Error("RSS inválido");
 
-    renderEpisodes(data.items.slice(0, CONFIG.maxEpisodes).map(item => ({
-      title: stripHtml(item.title || ""),
-      description: item.description || item.content || "",
-      date: item.pubDate || "",
-      duration: item.enclosure?.duration || "",
-      audio: item.enclosure?.link || item.enclosure?.url || "",
-    })));
+    const xmlText = await response.text();
+    const items = parseRss(xmlText)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, CONFIG.maxEpisodes);
+
+    renderEpisodes(items);
   } catch (error) {
     console.error(error);
     el.list.innerHTML = "";
