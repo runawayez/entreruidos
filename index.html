@@ -8,63 +8,89 @@
   <title>Entre Ruidos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div class="sky" aria-hidden="true">
-    <div class="stars"></div><div class="moon"></div><div class="planet p1"></div><div class="planet p2"></div>
-    <div class="nebula n1"></div><div class="nebula n2"></div>
+  <div class="site-bg" aria-hidden="true">
+    <div class="stars"></div>
+    <div class="planet planet-a"></div>
+    <div class="planet planet-b"></div>
+    <div class="moon"></div>
   </div>
 
-  <header class="topbar shell">
-    <a class="brand" href="#inicio">Entre Ruidos</a>
-    <nav class="main-nav" aria-label="Navegação principal">
-      <a href="#inicio" class="active">Início</a><a href="#episodios">Episódios</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a>
-    </nav>
-    <div class="nav-actions">
-      <a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer" aria-label="Spotify">SP</a>
-      <a href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer" aria-label="YouTube">YT</a>
-      <a class="listen" href="#episodios">Ouvir agora →</a>
+  <header class="site-header" id="siteHeader">
+    <div class="topbar shell">
+      <a class="brand" href="#inicio">Entre Ruidos</a>
+      <nav class="main-nav" aria-label="Navegação principal">
+        <a href="#inicio" class="active">Início</a>
+        <a href="#episodios">Episódios</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#contato">Contato</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer" aria-label="Spotify">SP</a>
+        <a href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer" aria-label="YouTube">YT</a>
+        <a class="listen" href="#featuredEpisode">Ouvir agora →</a>
+      </div>
     </div>
   </header>
 
   <main>
-    <section id="inicio" class="hero shell">
-      <div class="hero-visual">
-        <div class="triangle"></div>
-        <img src="/assets/cover.png" alt="Ilustração do Entre Ruidos" class="hero-cover" />
-        <div class="floating-note note-a">✦</div><div class="floating-note note-b">☾</div>
-      </div>
-
-      <div class="hero-content">
-        <p class="eyebrow">PODCAST AUTORAL • REFLEXÕES • TECNOLOGIA • VIDA</p>
-        <h1>Entre <span>Ruidos</span></h1>
-        <p class="tagline">Conversas para quem pensa demais<br>quando tudo fica em silêncio.</p>
-        <div class="cta-row">
-          <a class="button spotify" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Ouvir no Spotify</a>
-          <a class="button youtube" href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">Ver no YouTube</a>
-          <a class="button rss" href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">Assinar RSS</a>
+    <section id="inicio" class="hero">
+      <div class="hero-scene" aria-hidden="true"></div>
+      <div class="shell hero-grid">
+        <div class="hero-visual">
+          <img src="/assets/cover.png" alt="Ilustração do Entre Ruidos" class="hero-cover" />
         </div>
 
-        <article class="featured glass" id="featuredEpisode">
-          <div class="featured-art"><span>☾</span><i></i></div>
-          <div class="featured-copy">
-            <span class="mini-label">EPISÓDIO MAIS RECENTE</span>
-            <h2>Bolhas, realidade e a nova vida digital</h2>
-            <p>Sobre bolhas, vida digital e as diferentes formas de enxergar a realidade.</p>
-            <div class="audio-row">
-              <button class="play" id="featuredPlay" type="button" aria-label="Reproduzir episódio">▶</button>
-              <div class="wave" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
-              <span class="duration" id="featuredDuration">—</span>
-            </div>
+        <div class="hero-content">
+          <p class="eyebrow">PODCAST AUTORAL • REFLEXÕES • TECNOLOGIA • VIDA</p>
+          <h1>Entre <span>Ruidos</span></h1>
+          <p class="tagline">Conversas para quem pensa demais<br>quando tudo fica em silêncio.</p>
+          <div class="cta-row">
+            <a class="button spotify" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Ouvir no Spotify</a>
+            <a class="button youtube" href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">Ver no YouTube</a>
+            <a class="button rss" href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">Assinar RSS</a>
           </div>
-        </article>
+
+          <article class="featured glass" id="featuredEpisode">
+            <div class="featured-art-wrap">
+              <img class="featured-art" id="featuredArt" src="/assets/episode-bolha.png" alt="Arte do episódio mais recente" />
+            </div>
+            <div class="featured-copy">
+              <span class="mini-label">EPISÓDIO MAIS RECENTE</span>
+              <h2 id="featuredTitle">Bolha vs Realidade</h2>
+              <p id="featuredDescription">Neste episódio, falamos sobre o apego às nossas “bolhas”, a nova forma de viver no mundo digital e as diferentes maneiras de enxergar e lidar com a realidade.</p>
+              <div class="player-panel">
+                <div class="player-controls">
+                  <button class="play" id="featuredPlay" type="button" aria-label="Reproduzir episódio">▶</button>
+                  <div class="time-group"><span id="currentTime">00:00</span><span class="slash">/</span><span id="featuredDuration">00:00</span></div>
+                </div>
+
+                <div class="progress-wrap">
+                  <input type="range" id="progressBar" min="0" max="100" step="0.1" value="0" aria-label="Progresso do episódio" />
+                </div>
+
+                <div class="volume-wrap">
+                  <button class="icon-btn" id="muteBtn" type="button" aria-label="Ativar ou desativar som">🔊</button>
+                  <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="0.9" aria-label="Volume" />
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
     <section id="episodios" class="episodes shell">
-      <div class="section-title"><div><span>ÚLTIMOS SINAIS</span><h2>Episódios</h2></div><a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">VER TODOS →</a></div>
+      <div class="section-title">
+        <div>
+          <span>ÚLTIMOS SINAIS</span>
+          <h2>Episódios</h2>
+        </div>
+        <a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">VER TODOS →</a>
+      </div>
       <div id="episodeGrid" class="episode-grid" aria-live="polite"></div>
     </section>
 
@@ -74,16 +100,26 @@
         <h2>Ideias que continuam ecoando depois que o episódio acaba.</h2>
         <p>Entre Ruidos é um espaço para conversas, reflexões e ideias que continuam ecoando. Tecnologia, sociedade, cotidiano, dúvidas e pensamentos que aparecem quando o mundo finalmente fica quieto.</p>
       </div>
-      <div class="quote">“quando tudo fica em silêncio,<br><strong>alguma coisa continua fazendo ruído.</strong>”</div>
+      <div class="quote">
+        “quando tudo fica em silêncio,<br>
+        <strong>alguma coisa continua fazendo ruído.</strong>”
+      </div>
     </section>
   </main>
 
   <footer id="contato" class="footer shell">
-    <div><strong>Entre Ruidos</strong><span>Feito entre silêncio, ruído e café.</span></div>
-    <div class="footer-links"><a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Spotify</a><a href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">YouTube</a><a href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">RSS</a></div>
+    <div>
+      <strong>Entre Ruidos</strong>
+      <span>Feito entre silêncio, ruído e café.</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Spotify</a>
+      <a href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">YouTube</a>
+      <a href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">RSS</a>
+    </div>
   </footer>
 
-  <audio id="audioPlayer" preload="none"></audio>
+  <audio id="audioPlayer" preload="metadata"></audio>
   <script src="/script.js"></script>
 </body>
 </html>

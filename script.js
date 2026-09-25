@@ -1,17 +1,249 @@
 const FALLBACK = [
-  {title:'Bolhas, realidade e a nova vida digital',description:'Sobre bolhas, vida digital e as diferentes formas de enxergar a realidade.',duration:'28:47',audio:''},
-  {title:'Até quando a tecnologia é um problema?',description:'Uma reflexão sobre conforto, dependência e a forma como a tecnologia reorganiza a nossa rotina.',duration:'31:12',audio:''},
-  {title:'Silêncio, pensamentos e o que continua ecoando',description:'O que sobra quando a distração acaba e a cabeça finalmente ganha espaço para falar?',duration:'26:35',audio:''},
-  {title:'Rotina, caos e a busca por sentido',description:'Entre repetição, ansiedade e pequenas mudanças que podem redefinir a forma como vivemos.',duration:'34:20',audio:''},
+  {
+    title: 'Bolha vs Realidade',
+    description: 'Neste episódio, falamos sobre o apego às nossas “bolhas”, a nova forma de viver no mundo digital e as diferentes maneiras de enxergar e lidar com a realidade.',
+    duration: '00:19:54',
+    audio: '',
+    date: '2026-09-25',
+    image: '/assets/episode-bolha.png'
+  },
+  {
+    title: 'A alta tecnologia',
+    description: 'Até quando a tecnologia facilita a nossa vida — e em que momento ela começa a controlar nossos hábitos, escolhas e até a forma como enxergamos o mundo?',
+    duration: '00:25:33',
+    audio: '',
+    date: '2026-09-24',
+    image: '/assets/episode-tech.png'
+  }
 ];
-const grid=document.getElementById('episodeGrid');
-const player=document.getElementById('audioPlayer');
-const featured=document.getElementById('featuredEpisode');
-const playBtn=document.getElementById('featuredPlay');
-let currentAudio='';
-function esc(s=''){return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function niceDate(date){try{return new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(date))}catch{return ''}}
-function renderEpisodes(items){grid.innerHTML=items.slice(0,8).map((ep,i)=>`<article class="episode-card"><div class="episode-thumb"></div><div class="episode-body"><small>EP. ${String(i+1).padStart(2,'0')}</small><h3>${esc(ep.title)}</h3><p>${esc((ep.description||'').slice(0,125))}${(ep.description||'').length>125?'…':''}</p><div class="episode-meta"><span>${esc(ep.duration||'')}</span><span>${ep.date?niceDate(ep.date):''}</span></div></div></article>`).join('')}
-function setFeatured(ep){if(!ep)return;featured.querySelector('h2').textContent=ep.title;featured.querySelector('p').textContent=(ep.description||'').slice(0,180)||'Novo episódio do Entre Ruidos.';document.getElementById('featuredDuration').textContent=ep.duration||'—';currentAudio=ep.audio||''}
-async function loadFeed(){try{const r=await fetch('/api/rss');if(!r.ok)throw new Error('feed');const data=await r.json();const eps=data.episodes?.length?data.episodes:FALLBACK;renderEpisodes(eps);setFeatured(eps[0])}catch{renderEpisodes(FALLBACK);setFeatured(FALLBACK[0])}}
-playBtn.addEventListener('click',()=>{if(!currentAudio){window.open('https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg','_blank');return}if(player.src!==currentAudio)player.src=currentAudio;if(player.paused){player.play();playBtn.textContent='Ⅱ'}else{player.pause();playBtn.textContent='▶'}});player.addEventListener('ended',()=>playBtn.textContent='▶');loadFeed();
+
+const grid = document.getElementById('episodeGrid');
+const player = document.getElementById('audioPlayer');
+const featuredTitle = document.getElementById('featuredTitle');
+const featuredDescription = document.getElementById('featuredDescription');
+const featuredDuration = document.getElementById('featuredDuration');
+const featuredArt = document.getElementById('featuredArt');
+const playBtn = document.getElementById('featuredPlay');
+const progressBar = document.getElementById('progressBar');
+const volumeBar = document.getElementById('volumeBar');
+const muteBtn = document.getElementById('muteBtn');
+const currentTimeLabel = document.getElementById('currentTime');
+
+let episodes = [];
+let currentEpisode = null;
+let rafId = null;
+
+function esc(s = '') {
+  return String(s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function slugify(value = '') {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-');
+}
+
+function formatDate(date) {
+  try {
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit', month: 'short', year: 'numeric'
+    }).format(new Date(date));
+  } catch {
+    return '';
+  }
+}
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds)) return '00:00';
+  const total = Math.max(0, Math.floor(seconds));
+  const hrs = Math.floor(total / 3600);
+  const mins = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  if (hrs > 0) {
+    return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  }
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function parseDuration(value = '') {
+  if (!value) return 0;
+  if (/^\d+$/.test(value)) return Number(value);
+  const parts = String(value).split(':').map(Number);
+  if (parts.some(Number.isNaN)) return 0;
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  return 0;
+}
+
+function localArtForEpisode(ep = {}) {
+  const slug = slugify(ep.title || '');
+  if (slug.includes('bolha') || slug.includes('realidade')) return '/assets/episode-bolha.png';
+  if (slug.includes('tecnologia')) return '/assets/episode-tech.png';
+  return '/assets/cover.png';
+}
+
+function resolveArt(ep = {}) {
+  return ep.image || localArtForEpisode(ep);
+}
+
+function renderEpisodes(items) {
+  grid.innerHTML = items.map((ep, index) => `
+    <article class="episode-card">
+      <div class="episode-top">
+        <span>EP. ${String(index + 1).padStart(2, '0')}</span>
+        <span>${esc(ep.duration || '—')}</span>
+      </div>
+      <h3>${esc(ep.title)}</h3>
+      <p>${esc(ep.description || '')}</p>
+      <div class="episode-actions">
+        <button type="button" class="small-btn primary" data-play-index="${index}">Ouvir</button>
+        ${ep.link ? `<a class="small-btn" href="${esc(ep.link)}" target="_blank" rel="noreferrer">Abrir</a>` : ''}
+      </div>
+      <div class="episode-meta">
+        <span>${ep.date ? formatDate(ep.date) : ''}</span>
+        <span>${esc(ep.duration || '—')}</span>
+      </div>
+    </article>
+  `).join('');
+
+  grid.querySelectorAll('[data-play-index]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const ep = items[Number(button.dataset.playIndex)];
+      if (ep) {
+        setFeatured(ep, true);
+        document.getElementById('featuredEpisode')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+}
+
+function setFeatured(ep, autoload = false) {
+  currentEpisode = ep;
+  featuredTitle.textContent = ep.title || 'Novo episódio';
+  featuredDescription.textContent = ep.description || 'Novo episódio do Entre Ruidos.';
+  featuredDuration.textContent = ep.duration || formatTime(parseDuration(ep.duration));
+  featuredArt.src = resolveArt(ep);
+  featuredArt.alt = `Arte do episódio ${ep.title || ''}`.trim();
+
+  if (ep.audio) {
+    player.src = ep.audio;
+    player.load();
+  } else {
+    player.removeAttribute('src');
+    player.load();
+  }
+
+  resetPlayerUI();
+  if (autoload && ep.audio) {
+    player.play().then(() => updatePlayState()).catch(() => updatePlayState());
+  } else {
+    updatePlayState();
+  }
+}
+
+function resetPlayerUI() {
+  progressBar.value = 0;
+  currentTimeLabel.textContent = '00:00';
+}
+
+function updatePlayState() {
+  playBtn.textContent = player.paused ? '▶' : 'Ⅱ';
+}
+
+function updateProgress() {
+  const duration = player.duration || parseDuration(currentEpisode?.duration || '');
+  const current = player.currentTime || 0;
+  currentTimeLabel.textContent = formatTime(current);
+  featuredDuration.textContent = duration ? formatTime(duration) : (currentEpisode?.duration || '00:00');
+  progressBar.value = duration ? (current / duration) * 100 : 0;
+  rafId = !player.paused ? requestAnimationFrame(updateProgress) : null;
+}
+
+async function loadFeed() {
+  try {
+    const r = await fetch('/api/rss');
+    if (!r.ok) throw new Error('feed');
+    const data = await r.json();
+    episodes = (data.episodes?.length ? data.episodes : FALLBACK).map((ep) => ({
+      ...ep,
+      image: resolveArt(ep)
+    }));
+  } catch {
+    episodes = FALLBACK;
+  }
+
+  renderEpisodes(episodes);
+  setFeatured(episodes[0] || FALLBACK[0]);
+}
+
+playBtn.addEventListener('click', async () => {
+  if (!currentEpisode?.audio) {
+    if (currentEpisode?.link) {
+      window.open(currentEpisode.link, '_blank');
+    } else {
+      window.open('https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg', '_blank');
+    }
+    return;
+  }
+
+  try {
+    if (player.paused) {
+      await player.play();
+      if (!rafId) rafId = requestAnimationFrame(updateProgress);
+    } else {
+      player.pause();
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  } catch {}
+  updatePlayState();
+});
+
+progressBar.addEventListener('input', (e) => {
+  const duration = player.duration || parseDuration(currentEpisode?.duration || '');
+  if (!duration) return;
+  player.currentTime = (Number(e.target.value) / 100) * duration;
+  currentTimeLabel.textContent = formatTime(player.currentTime);
+});
+
+volumeBar.addEventListener('input', (e) => {
+  player.volume = Number(e.target.value);
+  player.muted = player.volume === 0;
+  muteBtn.textContent = player.muted ? '🔇' : '🔊';
+});
+
+muteBtn.addEventListener('click', () => {
+  player.muted = !player.muted;
+  if (player.muted) {
+    muteBtn.textContent = '🔇';
+  } else {
+    muteBtn.textContent = '🔊';
+    if (player.volume === 0) {
+      player.volume = 0.9;
+      volumeBar.value = '0.9';
+    }
+  }
+});
+
+player.addEventListener('play', () => {
+  updatePlayState();
+  if (!rafId) rafId = requestAnimationFrame(updateProgress);
+});
+player.addEventListener('pause', () => {
+  updatePlayState();
+  if (rafId) cancelAnimationFrame(rafId);
+  rafId = null;
+});
+player.addEventListener('loadedmetadata', () => {
+  featuredDuration.textContent = formatTime(player.duration);
+});
+player.addEventListener('ended', () => {
+  updatePlayState();
+  progressBar.value = 0;
+  currentTimeLabel.textContent = '00:00';
+});
+
+player.volume = Number(volumeBar.value);
+loadFeed();

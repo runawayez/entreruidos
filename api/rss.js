@@ -1,5 +1,35 @@
 const { XMLParser } = require('fast-xml-parser');
 
+function stripHtml(text = '') {
+  return String(text)
+    .replace(/<!\[CDATA\[|\]\]>/g, '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function ensureArray(value) {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function pickImage(item = {}, channel = {}) {
+  const fromItem =
+    item['itunes:image']?.href ||
+    item['media:thumbnail']?.url ||
+    item['media:content']?.url ||
+    item.enclosure?.image ||
+    '';
+
+  if (fromItem) return fromItem;
+
+  const content = item['content:encoded'] || item.description || '';
+  const match = String(content).match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (match?.[1]) return match[1];
+
+  return channel['itunes:image']?.href || '';
+}
+
 module.exports = async function handler(req, res) {
   const RSS_URL = 'https://anchor.fm/s/117a3989c/podcast/rss';
   try {
@@ -9,27 +39,23 @@ module.exports = async function handler(req, res) {
     const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '' });
     const data = parser.parse(xml);
     const channel = data?.rss?.channel || {};
-    let items = channel.item || [];
-    if (!Array.isArray(items)) items = [items];
+    const items = ensureArray(channel.item);
 
     const episodes = items.slice(0, 12).map((item, index) => ({
       index: index + 1,
       title: item.title || `Episódio ${index + 1}`,
-      description: String(item.description || item['itunes:summary'] || '')
-        .replace(/<[^>]*>/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim(),
+      description: stripHtml(item.description || item['itunes:summary'] || item['content:encoded'] || ''),
       date: item.pubDate || '',
       duration: item['itunes:duration'] || '',
       audio: item.enclosure?.url || '',
       link: item.link || '',
-      image: item['itunes:image']?.href || channel['itunes:image']?.href || ''
+      image: pickImage(item, channel)
     }));
 
     res.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400');
     res.status(200).json({
       title: channel.title || 'Entre Ruidos',
-      description: channel.description || '',
+      description: stripHtml(channel.description || ''),
       episodes
     });
   } catch (error) {
