@@ -1,0 +1,15 @@
+{
+  "name": "entre-ruidos",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vercel dev",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^5.0.8"
+  },
+  "devDependencies": {
+    "vercel": "^48.1.0"
+  }
+}

@@ -3,152 +3,87 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Entre Ruidos — conversas para quem pensa demais quando tudo fica em silêncio." />
-  <meta name="theme-color" content="#0b0b0c" />
+  <meta name="theme-color" content="#0b0710" />
+  <meta name="description" content="Conversas para quem pensa demais quando tudo fica em silêncio." />
   <title>Entre Ruidos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=11" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <header class="site-header shell">
-    <a class="brand" href="#top" aria-label="Entre Ruidos, início">
-      <span class="brand-mark mic-mark" aria-hidden="true">
-        <svg viewBox="0 0 24 24" role="img" focusable="false">
-          <rect x="8.25" y="3" width="7.5" height="12" rx="3.75" fill="currentColor"/>
-          <path d="M6 10.8a6 6 0 0 0 12 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M12 16.8v3.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          <path d="M9 20h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </span>
-      <span>ENTRE RUIDOS</span>
-    </a>
-    <a class="episodes-jump" href="#episodios">Episódios <span>↓</span></a>
+  <div class="sky" aria-hidden="true">
+    <div class="stars"></div><div class="moon"></div><div class="planet p1"></div><div class="planet p2"></div>
+    <div class="nebula n1"></div><div class="nebula n2"></div>
+  </div>
+
+  <header class="topbar shell">
+    <a class="brand" href="#inicio">Entre Ruidos</a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="#inicio" class="active">Início</a><a href="#episodios">Episódios</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer" aria-label="Spotify">SP</a>
+      <a href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer" aria-label="YouTube">YT</a>
+      <a class="listen" href="#episodios">Ouvir agora →</a>
+    </div>
   </header>
 
-  <main id="top">
-    <section class="hero shell">
-      <div class="hero-kicker">PODCAST INDEPENDENTE</div>
-      <h1>Conversas para quem pensa demais quando tudo fica em silêncio.</h1>
-      <p class="hero-copy">Ideias, dúvidas e coisas que continuam ecoando depois que o episódio acaba.</p>
-
-      <div class="platforms" aria-label="Onde ouvir o Entre Ruidos">
-        <a class="platform platform-primary" id="spotifyLink" target="_blank" rel="noreferrer">
-          <span class="platform-icon spotify-icon" aria-hidden="true">
-            <svg viewBox="0 0 32 32" role="img" focusable="false">
-              <circle cx="16" cy="16" r="16" fill="currentColor"/>
-              <path d="M8.3 11.8c5.5-1.7 11.7-1.3 16.1 1.1" fill="none" stroke="#07160c" stroke-width="2.3" stroke-linecap="round"/>
-              <path d="M9.6 16.2c4.6-1.3 9.8-.9 13.6 1" fill="none" stroke="#07160c" stroke-width="2" stroke-linecap="round"/>
-              <path d="M10.7 20.3c3.7-.9 7.7-.6 10.8.9" fill="none" stroke="#07160c" stroke-width="1.8" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span><small>OUÇA NO</small><strong>Spotify</strong></span>
-          <b aria-hidden="true">↗</b>
-        </a>
-        <a class="platform platform-youtube" id="youtubeLink" target="_blank" rel="noreferrer">
-          <span class="platform-icon youtube" aria-hidden="true">
-            <svg viewBox="0 0 32 24" role="img" focusable="false">
-              <rect x="0" y="0" width="32" height="24" rx="7" fill="currentColor"/>
-              <path d="M13 7.5 21 12l-8 4.5z" fill="#fff"/>
-            </svg>
-          </span>
-          <span><small>ACOMPANHE NO</small><strong>YouTube</strong></span>
-          <b aria-hidden="true">↗</b>
-        </a>
+  <main>
+    <section id="inicio" class="hero shell">
+      <div class="hero-visual">
+        <div class="triangle"></div>
+        <img src="/assets/cover.png" alt="Ilustração do Entre Ruidos" class="hero-cover" />
+        <div class="floating-note note-a">✦</div><div class="floating-note note-b">☾</div>
       </div>
 
-      <p class="platform-note">Prefere seu app de podcast? Use a opção de download ao lado do player.</p>
+      <div class="hero-content">
+        <p class="eyebrow">PODCAST AUTORAL • REFLEXÕES • TECNOLOGIA • VIDA</p>
+        <h1>Entre <span>Ruidos</span></h1>
+        <p class="tagline">Conversas para quem pensa demais<br>quando tudo fica em silêncio.</p>
+        <div class="cta-row">
+          <a class="button spotify" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Ouvir no Spotify</a>
+          <a class="button youtube" href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">Ver no YouTube</a>
+          <a class="button rss" href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">Assinar RSS</a>
+        </div>
+
+        <article class="featured glass" id="featuredEpisode">
+          <div class="featured-art"><span>☾</span><i></i></div>
+          <div class="featured-copy">
+            <span class="mini-label">EPISÓDIO MAIS RECENTE</span>
+            <h2>Bolhas, realidade e a nova vida digital</h2>
+            <p>Sobre bolhas, vida digital e as diferentes formas de enxergar a realidade.</p>
+            <div class="audio-row">
+              <button class="play" id="featuredPlay" type="button" aria-label="Reproduzir episódio">▶</button>
+              <div class="wave" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
+              <span class="duration" id="featuredDuration">—</span>
+            </div>
+          </div>
+        </article>
+      </div>
     </section>
 
-    <section class="episodes shell" id="episodios" aria-labelledby="episodesTitle">
-      <div class="section-head">
-        <div>
-          <span class="section-label">ARQUIVO</span>
-          <h2 id="episodesTitle">Últimos episódios</h2>
-        </div>
-        <span id="feedStatus" class="feed-status">carregando…</span>
-      </div>
+    <section id="episodios" class="episodes shell">
+      <div class="section-title"><div><span>ÚLTIMOS SINAIS</span><h2>Episódios</h2></div><a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">VER TODOS →</a></div>
+      <div id="episodeGrid" class="episode-grid" aria-live="polite"></div>
+    </section>
 
-      <div id="episodesList" class="episodes-list" aria-live="polite">
-        <div class="episode-skeleton"></div>
-        <div class="episode-skeleton"></div>
-        <div class="episode-skeleton"></div>
+    <section id="sobre" class="about shell">
+      <div class="about-card glass">
+        <span class="mini-label">SOBRE O PODCAST</span>
+        <h2>Ideias que continuam ecoando depois que o episódio acaba.</h2>
+        <p>Entre Ruidos é um espaço para conversas, reflexões e ideias que continuam ecoando. Tecnologia, sociedade, cotidiano, dúvidas e pensamentos que aparecem quando o mundo finalmente fica quieto.</p>
       </div>
-      <p id="feedMessage" class="feed-message" hidden></p>
+      <div class="quote">“quando tudo fica em silêncio,<br><strong>alguma coisa continua fazendo ruído.</strong>”</div>
     </section>
   </main>
 
-  <footer class="footer shell">
-    <div>
-      <strong>Entre Ruidos</strong>
-      <span>© <span id="year"></span></span>
-    </div>
-    <div class="footer-links">
-      <a id="footerSpotify" target="_blank" rel="noreferrer">Spotify</a>
-      <a id="footerYoutube" target="_blank" rel="noreferrer">YouTube</a>
-      <a href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">RSS</a>
-    </div>
+  <footer id="contato" class="footer shell">
+    <div><strong>Entre Ruidos</strong><span>Feito entre silêncio, ruído e café.</span></div>
+    <div class="footer-links"><a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Spotify</a><a href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">YouTube</a><a href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">RSS</a></div>
   </footer>
 
-  <aside class="player" id="player" hidden aria-label="Player do podcast">
-    <div class="player-inner shell">
-      <div class="player-nowplaying">
-        <div class="player-art" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
-        <div class="player-copy">
-          <strong id="playerTitle">Selecione um episódio</strong>
-          <span>Entre Ruidos</span>
-        </div>
-      </div>
-
-      <div class="player-center">
-        <div class="transport">
-          <button class="play-main" id="playButton" type="button" aria-label="Reproduzir">
-            <span id="transportGlyph" class="transport-glyph" aria-hidden="true">▶</span>
-          </button>
-        </div>
-        <div class="progress-row">
-          <span id="currentTime" class="time">0:00</span>
-          <input id="seek" class="range seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="Progresso do episódio" />
-          <span id="duration" class="time">0:00</span>
-        </div>
-      </div>
-
-      <div class="player-tools">
-        <button id="muteButton" class="mute" type="button" aria-label="Ativar ou silenciar áudio">
-          <svg id="volumeIcon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h4l5 4V5.5l-5 4H4z" fill="currentColor"/><path d="M16 9c1.5 1.5 1.5 4.5 0 6M18.7 6.5c3 3 3 8 0 11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-        </button>
-        <input id="volume" class="range volume" type="range" min="0" max="1" value="1" step="0.01" aria-label="Volume" />
-        <button id="closePlayer" class="close-player" type="button" aria-label="Fechar player">×</button>
-      </div>
-    </div>
-  </aside>
-
-  <audio id="audio" preload="metadata"></audio>
-
-  <template id="episodeTemplate">
-    <article class="episode">
-      <div class="episode-number"></div>
-      <div class="episode-content">
-        <div class="episode-meta"></div>
-        <h3></h3>
-        <p class="episode-description"></p>
-      </div>
-      <div class="episode-actions">
-        <button class="listen-here" type="button" aria-label="Reproduzir episódio">
-          <span class="episode-glyph" aria-hidden="true">▶</span>
-        </button>
-        <a class="download-episode" href="#" target="_blank" rel="noopener noreferrer" aria-label="Baixar episódio em nova aba" title="Baixar episódio">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 4v10m0 0 4-4m-4 4-4-4M5 18h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </a>
-      </div>
-    </article>
-  </template>
-
-  <script src="script.js?v=11"></script>
+  <audio id="audioPlayer" preload="none"></audio>
+  <script src="/script.js"></script>
 </body>
 </html>

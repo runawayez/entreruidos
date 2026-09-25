@@ -1,28 +1,21 @@
 # Entre Ruidos — site
 
-Site estático do podcast com player e episódios carregados automaticamente pelo RSS.
+Projeto pronto para Vercel, inspirado na identidade psicodélica/cósmica definida para o podcast.
 
-## Atualização do feed
+## O que já está funcionando
+- layout responsivo desktop/mobile;
+- links para Spotify, YouTube e RSS;
+- API `/api/rss` que lê o feed do Spotify for Creators/Anchor;
+- episódio mais recente preenchido automaticamente;
+- cards dos episódios gerados a partir do RSS;
+- player HTML5 para o arquivo de áudio do feed;
+- fallback visual caso o feed fique indisponível.
 
-Esta versão **não usa mais rss2json**. A função `api/rss.js` da Vercel busca diretamente:
+## Publicar
+1. Envie todos os arquivos desta pasta para o repositório GitHub já conectado à Vercel.
+2. Faça commit e push na branch de produção (normalmente `main`).
+3. A Vercel instala as dependências e publica automaticamente.
 
-`https://anchor.fm/s/117a3989c/podcast/rss`
-
-A resposta é enviada com cache desativado, então episódios novos aparecem sem depender do cache de terceiros.
-
-## Deploy na Vercel
-
-Suba todos os arquivos deste diretório para o mesmo repositório, incluindo a pasta `api/`. Depois faça push na branch conectada à Vercel.
-
-Estrutura:
-
-```
-api/
-  rss.js
-index.html
-style.css
-script.js
-README.md
-```
-
-Não precisa de banco de dados, pacote npm ou configuração de build.
+RSS configurado: https://anchor.fm/s/117a3989c/podcast/rss
+Spotify: https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg
+YouTube: https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9
