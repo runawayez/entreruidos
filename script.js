@@ -247,3 +247,27 @@ player.addEventListener('ended', () => {
 
 player.volume = Number(volumeBar.value);
 loadFeed();
+
+// Navegação de página única sem alterar a URL visível.
+(function keepCleanUrl() {
+  const cleanUrl = `${window.location.origin}${window.location.pathname}`;
+  if (window.location.hash) {
+    history.replaceState(null, '', cleanUrl);
+  }
+
+  const internalLinks = document.querySelectorAll('a[href^="#"]');
+  internalLinks.forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const targetId = link.getAttribute('href');
+      const target = document.querySelector(targetId);
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      history.replaceState(null, '', cleanUrl);
+    });
+  });
+
+  window.addEventListener('hashchange', () => {
+    if (window.location.hash) history.replaceState(null, '', cleanUrl);
+  });
+})();

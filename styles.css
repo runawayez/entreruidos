@@ -29,17 +29,20 @@ img{max-width:100%;display:block}
 button,input{font:inherit}
 .shell{width:min(1440px,92vw);margin:0 auto}
 
-.site-bg{position:fixed;inset:0;z-index:-5;overflow:hidden;background:
-  radial-gradient(circle at 72% 18%, rgba(140,55,190,.18), transparent 18%),
-  radial-gradient(circle at 18% 56%, rgba(255,91,128,.08), transparent 26%),
-  linear-gradient(180deg,#05030a 0%,#090611 40%,#0b0812 100%);
+.site-bg{
+  position:fixed;
+  inset:0;
+  z-index:-5;
+  overflow:hidden;
+  background:#06040a;
 }
-.stars{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.9) 0 1px,transparent 1.2px);background-size:38px 38px;opacity:.22}
-.moon,.planet{position:absolute;border-radius:50%;pointer-events:none}
-.moon{width:120px;height:120px;left:4.8vw;top:100px;background:var(--yellow);box-shadow:0 0 90px rgba(255,215,117,.25)}
-.moon::after{content:'';position:absolute;inset:-6px 0 0 36px;width:110px;height:110px;border-radius:50%;background:#07050b}
-.planet-a{width:86px;height:86px;right:6vw;top:120px;background:repeating-linear-gradient(14deg,#6d3698 0 8px,#422261 8px 16px)}
-.planet-b{width:38px;height:38px;left:44vw;top:110px;background:#ff4c8d}
+.stars{
+  position:absolute;
+  inset:0;
+  background-image:radial-gradient(circle,rgba(255,255,255,.78) 0 1px,transparent 1.2px);
+  background-size:42px 42px;
+  opacity:.16;
+}
 
 .site-header{
   position:sticky;
@@ -71,16 +74,23 @@ button,input{font:inherit}
 }
 .hero-scene{
   position:absolute;
-  inset:auto 0 0 0;
-  height:72%;
+  inset:0;
   background:
-    linear-gradient(180deg,transparent 0%,rgba(8,5,13,.25) 30%,rgba(8,5,13,.85) 100%),
-    url('/assets/hero-bg.png') center bottom / cover no-repeat;
-  opacity:.55;
+    linear-gradient(90deg,rgba(5,3,9,.12) 0%,rgba(5,3,9,.08) 45%,rgba(5,3,9,.18) 100%),
+    linear-gradient(180deg,rgba(5,3,9,.04) 0%,rgba(5,3,9,.10) 62%,rgba(5,3,9,.92) 100%),
+    url('/assets/hero-bg.png') center 46% / cover no-repeat;
+  opacity:.78;
   pointer-events:none;
-  mask-image:linear-gradient(180deg, transparent 0%, #000 24%, #000 100%);
-  -webkit-mask-image:linear-gradient(180deg, transparent 0%, #000 24%, #000 100%);
 }
+.hero::after{
+  content:'';
+  position:absolute;
+  inset:auto 0 0 0;
+  height:220px;
+  background:linear-gradient(180deg,transparent,#07050b 88%);
+  pointer-events:none;
+}
+
 .hero-grid{
   position:relative;
   display:grid;
@@ -203,9 +213,6 @@ input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;b
 }
 @media (max-width: 700px){
   .shell{width:min(94vw,720px)}
-  .moon{width:82px;height:82px;top:92px}
-  .moon::after{width:74px;height:74px;left:24px}
-  .planet-a{width:56px;height:56px}
   .brand{font-size:22px}
   .nav-actions>a:not(.listen){display:none}
   .listen{padding:11px 13px;font-size:10px}
