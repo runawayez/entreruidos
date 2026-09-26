@@ -27,7 +27,7 @@ function pickImage(item = {}, channel = {}) {
   const match = String(content).match(/<img[^>]+src=["']([^"']+)["']/i);
   if (match?.[1]) return match[1];
 
-  return channel['itunes:image']?.href || '';
+  return ''; // não usa a capa geral do podcast como arte de episódio
 }
 
 module.exports = async function handler(req, res) {
