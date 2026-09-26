@@ -3,53 +3,65 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0b0710" />
-  <meta name="description" content="Conversas para quem pensa demais quando tudo fica em silêncio." />
+  <meta name="theme-color" content="#08060c" />
+  <meta name="description" content="Entre Ruidos — conversas para quem pensa demais quando tudo fica em silêncio." />
   <title>Entre Ruidos</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <div class="site-bg" aria-hidden="true"><div class="stars"></div></div>
-
   <header class="site-header" id="siteHeader">
     <div class="topbar shell">
-      <a class="brand" href="#inicio">Entre Ruidos</a>
+      <a class="brand nav-scroll" href="#inicio">Entre Ruidos</a>
       <nav class="main-nav" aria-label="Navegação principal">
-        <a href="#inicio" class="active">Início</a>
-        <a href="#episodios">Episódios</a>
-        <a href="#sobre">Sobre</a>
-        <a href="#contato">Contato</a>
+        <a href="#inicio" class="nav-scroll active">Início</a>
+        <a href="#episodios" class="nav-scroll">Episódios</a>
+        <a href="#sobre" class="nav-scroll">Sobre</a>
+        <a href="#contato" class="nav-scroll">Contato</a>
       </nav>
       <div class="nav-actions">
-        <a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer" aria-label="Spotify">SP</a>
-        <a href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer" aria-label="YouTube">YT</a>
-        <a class="listen" href="#featuredEpisode">Ouvir agora →</a>
+        <a class="social-circle spotify-circle" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer" aria-label="Spotify">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.15a.75.75 0 1 1-.34-1.46c4.58-1.05 8.51-.61 11.67 1.32a.75.75 0 0 1 .25 1.04Zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.98-8.15-2.55-11.97-1.39a.94.94 0 0 1-.55-1.79c4.36-1.33 9.78-.69 13.5 1.59a.94.94 0 0 1 .31 1.28Zm.13-3.4C14.32 7.45 7.93 7.24 4.23 8.36a1.12 1.12 0 1 1-.65-2.14c4.25-1.29 11.33-1.04 15.75 1.59a1.12 1.12 0 0 1-1.14 1.94Z"/></svg>
+        </a>
+        <a class="social-circle youtube-circle" href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer" aria-label="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.08 0 12 0 12s0 3.92.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.81ZM9.55 15.57V8.43L15.82 12l-6.27 3.57Z"/></svg>
+        </a>
+        <a class="listen nav-scroll" href="#featuredEpisode">Ouvir agora →</a>
       </div>
     </div>
   </header>
 
   <main>
-    <section id="inicio" class="hero">
-      <div class="hero-scene" aria-hidden="true"></div>
+    <section id="inicio" class="hero page-anchor">
+      <div class="hero-backdrop" aria-hidden="true"></div>
       <div class="shell hero-grid">
         <div class="hero-visual">
-          <img src="/assets/cover.png" alt="Ilustração do Entre Ruidos" class="hero-cover" />
+          <img src="/assets/cover.png" alt="Ilustração do podcast Entre Ruidos" class="hero-cover" />
         </div>
 
         <div class="hero-content">
           <p class="eyebrow">PODCAST AUTORAL • REFLEXÕES • TECNOLOGIA • VIDA</p>
           <h1>Entre <span>Ruidos</span></h1>
           <p class="tagline">Conversas para quem pensa demais<br>quando tudo fica em silêncio.</p>
+
           <div class="cta-row">
-            <a class="button spotify" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Ouvir no Spotify</a>
-            <a class="button youtube" href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">Ver no YouTube</a>
-            <a class="button rss" href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">Assinar RSS</a>
+            <a class="button spotify" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm4.59 14.42a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.15a.75.75 0 1 1-.34-1.46c4.58-1.05 8.51-.61 11.67 1.32a.75.75 0 0 1 .25 1.04Zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.98-8.15-2.55-11.97-1.39a.94.94 0 0 1-.55-1.79c4.36-1.33 9.78-.69 13.5 1.59a.94.94 0 0 1 .31 1.28Zm.13-3.4C14.32 7.45 7.93 7.24 4.23 8.36a1.12 1.12 0 1 1-.65-2.14c4.25-1.29 11.33-1.04 15.75 1.59a1.12 1.12 0 0 1-1.14 1.94Z"/></svg>
+              Ouvir no Spotify
+            </a>
+            <a class="button youtube" href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.08 0 12 0 12s0 3.92.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.81ZM9.55 15.57V8.43L15.82 12l-6.27 3.57Z"/></svg>
+              Ver no YouTube
+            </a>
+            <a class="button rss" href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3.5a1.5 1.5 0 1 0 0 3c6.9 0 12.5 5.6 12.5 12.5a1.5 1.5 0 1 0 3 0C20.5 10.44 13.56 3.5 5 3.5Zm0 6a1.5 1.5 0 1 0 0 3A6.5 6.5 0 0 1 11.5 19a1.5 1.5 0 1 0 3 0A9.5 9.5 0 0 0 5 9.5ZM5 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
+              Assinar RSS
+            </a>
           </div>
 
-          <article class="featured glass" id="featuredEpisode">
+          <article class="featured glass page-anchor" id="featuredEpisode">
             <div class="featured-art-wrap">
               <img class="featured-art" id="featuredArt" src="/assets/episode-bolha.png" alt="Arte do episódio mais recente" />
             </div>
@@ -58,15 +70,11 @@
               <h2 id="featuredTitle">Bolha vs Realidade</h2>
               <p id="featuredDescription">Neste episódio, falamos sobre o apego às nossas “bolhas”, a nova forma de viver no mundo digital e as diferentes maneiras de enxergar e lidar com a realidade.</p>
               <div class="player-panel">
-                <div class="player-controls">
-                  <button class="play" id="featuredPlay" type="button" aria-label="Reproduzir episódio">▶</button>
+                <button class="play" id="featuredPlay" type="button" aria-label="Reproduzir episódio">▶</button>
+                <div class="player-main">
                   <div class="time-group"><span id="currentTime">00:00</span><span class="slash">/</span><span id="featuredDuration">00:00</span></div>
-                </div>
-
-                <div class="progress-wrap">
                   <input type="range" id="progressBar" min="0" max="100" step="0.1" value="0" aria-label="Progresso do episódio" />
                 </div>
-
                 <div class="volume-wrap">
                   <button class="icon-btn" id="muteBtn" type="button" aria-label="Ativar ou desativar som">🔊</button>
                   <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="0.9" aria-label="Volume" />
@@ -78,7 +86,7 @@
       </div>
     </section>
 
-    <section id="episodios" class="episodes shell">
+    <section id="episodios" class="episodes shell page-anchor">
       <div class="section-title">
         <div>
           <span>ÚLTIMOS SINAIS</span>
@@ -89,20 +97,26 @@
       <div id="episodeGrid" class="episode-grid" aria-live="polite"></div>
     </section>
 
-    <section id="sobre" class="about shell">
+    <section id="sobre" class="about shell page-anchor">
       <div class="about-card glass">
         <span class="mini-label">SOBRE O PODCAST</span>
-        <h2>Ideias que continuam ecoando depois que o episódio acaba.</h2>
-        <p>Entre Ruidos é um espaço para conversas, reflexões e ideias que continuam ecoando. Tecnologia, sociedade, cotidiano, dúvidas e pensamentos que aparecem quando o mundo finalmente fica quieto.</p>
+        <h2>Um espaço para sair do ruído e simplesmente escutar.</h2>
+        <p>Entre Ruidos nasceu da vontade de criar um momento em que você possa se desconectar um pouco do mundo, colocar os fones e acompanhar uma reflexão sem pressa. A inspiração passa pela liberdade de conversa de <em>The Midnight Gospel</em>: assuntos existenciais, tecnologia, cotidiano, espiritualidade, dúvidas, contradições e tudo aquilo que continua ecoando quando o resto fica em silêncio.</p>
+        <p>Mais do que respostas prontas, o podcast funciona como um diário falado. São reflexões e desabafos sinceros de um buscador que ainda está aprendendo, mudando de ideia e evoluindo enquanto vive. A proposta é que, por alguns minutos, você não precise organizar todos os pensamentos ao mesmo tempo — apenas ouvir, refletir e talvez encontrar alguma coisa sua no meio desses ruídos.</p>
       </div>
-      <div class="quote">
-        “quando tudo fica em silêncio,<br>
-        <strong>alguma coisa continua fazendo ruído.</strong>”
+    </section>
+
+    <section id="contato" class="contact shell page-anchor">
+      <div class="contact-inner">
+        <span class="mini-label">CONTATO</span>
+        <h2>Tem uma ideia que pode virar conversa?</h2>
+        <p>Para sugestões de temas, comentários sobre o podcast, convites, parcerias ou contato comercial, escreva para:</p>
+        <a class="email-link" href="mailto:matheus-lo-k@hotmail.com">matheus-lo-k@hotmail.com</a>
       </div>
     </section>
   </main>
 
-  <footer id="contato" class="footer shell">
+  <footer class="footer shell">
     <div>
       <strong>Entre Ruidos</strong>
       <span>Feito entre silêncio, ruído e café.</span>

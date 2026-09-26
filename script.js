@@ -85,7 +85,9 @@ function localArtForEpisode(ep = {}) {
 }
 
 function resolveArt(ep = {}) {
-  return ep.image || localArtForEpisode(ep);
+  const local = localArtForEpisode(ep);
+  if (local !== '/assets/cover.png') return local;
+  return ep.image || local;
 }
 
 function renderEpisodes(items) {
@@ -248,26 +250,49 @@ player.addEventListener('ended', () => {
 player.volume = Number(volumeBar.value);
 loadFeed();
 
-// Navegação de página única sem alterar a URL visível.
-(function keepCleanUrl() {
-  const cleanUrl = `${window.location.origin}${window.location.pathname}`;
-  if (window.location.hash) {
-    history.replaceState(null, '', cleanUrl);
+// Navegação de página única: scroll alinhado ao header e URL sempre limpa.
+(function setupSinglePageNavigation() {
+  const cleanPath = `${window.location.pathname}${window.location.search}`;
+  const navLinks = [...document.querySelectorAll('.nav-scroll')];
+  const menuLinks = [...document.querySelectorAll('.main-nav .nav-scroll')];
+
+  function cleanUrl() {
+    if (window.location.hash) history.replaceState(null, '', cleanPath);
   }
 
-  const internalLinks = document.querySelectorAll('a[href^="#"]');
-  internalLinks.forEach((link) => {
+  function scrollToTarget(target) {
+    const header = document.getElementById('siteHeader');
+    const offset = (header?.offsetHeight || 0) + 22;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+
+  navLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
-      const targetId = link.getAttribute('href');
-      const target = document.querySelector(targetId);
+      const selector = link.getAttribute('href');
+      if (!selector || !selector.startsWith('#')) return;
+      const target = document.querySelector(selector);
       if (!target) return;
       event.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      history.replaceState(null, '', cleanUrl);
+      scrollToTarget(target);
+      history.replaceState(null, '', cleanPath);
     });
   });
 
-  window.addEventListener('hashchange', () => {
-    if (window.location.hash) history.replaceState(null, '', cleanUrl);
-  });
+  const observed = ['inicio', 'episodios', 'sobre', 'contato']
+    .map((id) => document.getElementById(id))
+    .filter(Boolean);
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    menuLinks.forEach((link) => {
+      link.classList.toggle('active', link.getAttribute('href') === `#${visible.target.id}`);
+    });
+  }, { rootMargin: '-20% 0px -60% 0px', threshold: [0, .2, .5] });
+  observed.forEach((section) => observer.observe(section));
+
+  cleanUrl();
+  window.addEventListener('hashchange', cleanUrl);
 })();
