@@ -85,9 +85,7 @@ function localArtForEpisode(ep = {}) {
 }
 
 function resolveArt(ep = {}) {
-  const local = localArtForEpisode(ep);
-  if (local !== '/assets/cover.png') return local;
-  return ep.image || local;
+  return ep.image || localArtForEpisode(ep);
 }
 
 function renderEpisodes(items) {
@@ -170,7 +168,7 @@ async function loadFeed() {
     const data = await r.json();
     episodes = (data.episodes?.length ? data.episodes : FALLBACK).map((ep) => ({
       ...ep,
-      image: resolveArt(ep)
+      image: ep.image || localArtForEpisode(ep)
     }));
   } catch {
     episodes = FALLBACK;
