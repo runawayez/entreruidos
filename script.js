@@ -18,7 +18,6 @@ const FALLBACK = [
 ];
 
 const grid = document.getElementById('episodeGrid');
-const startGrid = document.getElementById('startGrid');
 const episodeDetail = document.getElementById('episodeDetail');
 const detailBack = document.getElementById('detailBack');
 const detailArt = document.getElementById('detailArt');
@@ -207,40 +206,6 @@ function renderHomeEpisodes() {
 
   const hasArchive = episodes.length > HOME_EPISODE_COUNT;
   if (episodeArchiveCta) episodeArchiveCta.hidden = !hasArchive;
-}
-
-function renderStartHere() {
-  if (!startGrid || !episodes.length) return;
-
-  const preferred = ['persona', 'bolha', 'tecnologia'];
-  const selected = [];
-  for (const key of preferred) {
-    const found = episodes.find((ep) => slugify(ep.title).includes(key) && !selected.includes(ep));
-    if (found) selected.push(found);
-  }
-  for (const ep of episodes) {
-    if (selected.length >= 3) break;
-    if (!selected.includes(ep)) selected.push(ep);
-  }
-
-  startGrid.innerHTML = selected.slice(0, 3).map((ep) => {
-    const index = episodes.indexOf(ep);
-    return `
-      <article class="start-card">
-        <span class="start-number">EP. ${episodeNumber(index)}</span>
-        <h3>${esc(ep.title)}</h3>
-        <p>${esc(ep.description || '')}</p>
-        <a href="${episodePath(ep)}" data-start-detail="${index}">Conhecer episódio →</a>
-      </article>
-    `;
-  }).join('');
-
-  startGrid.querySelectorAll('[data-start-detail]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      event.preventDefault();
-      openEpisodeDetail(episodes[Number(link.dataset.startDetail)]);
-    });
-  });
 }
 
 function getFilteredEpisodes() {
@@ -690,7 +655,6 @@ async function loadFeed() {
   }
 
   renderHomeEpisodes();
-  renderStartHere();
   setFeatured(episodes[0] || FALLBACK[0]);
   handleRoute();
 }
