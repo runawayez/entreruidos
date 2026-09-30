@@ -31,7 +31,6 @@ const muteBtn = document.getElementById('muteBtn');
 const currentTimeLabel = document.getElementById('currentTime');
 const episodeArchiveCta = document.getElementById('episodeArchiveCta');
 const episodeArchiveBtn = document.getElementById('episodeArchiveBtn');
-const openArchiveTop = document.getElementById('openArchiveTop');
 const episodeArchive = document.getElementById('episodeArchive');
 const archiveList = document.getElementById('archiveList');
 const archiveCount = document.getElementById('archiveCount');
@@ -52,14 +51,6 @@ let archiveQuery = '';
 
 function esc(s = '') {
   return String(s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-}
-
-function slugify(value = '') {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-');
 }
 
 function formatDate(date) {
@@ -139,7 +130,6 @@ function renderHomeEpisodes() {
 
   const hasArchive = episodes.length > HOME_EPISODE_COUNT;
   if (episodeArchiveCta) episodeArchiveCta.hidden = !hasArchive;
-  if (openArchiveTop) openArchiveTop.hidden = !hasArchive;
 }
 
 function getFilteredEpisodes() {
@@ -219,34 +209,42 @@ function renderArchive() {
   });
 }
 
-function scrollArchiveToTop() {
+function scrollSectionIntoView(target) {
+  if (!target) return;
   const header = document.getElementById('siteHeader');
-  const offset = (header?.offsetHeight || 0) + 18;
-  const top = episodeArchive.getBoundingClientRect().top + window.scrollY - offset;
+  const offset = (header?.offsetHeight || 0) + 24;
+  const anchor = target.id === 'episodios'
+    ? (target.querySelector('.section-title') || target)
+    : target;
+  const top = anchor.getBoundingClientRect().top + window.scrollY - offset;
   window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+function scrollArchiveToTop() {
+  scrollSectionIntoView(document.getElementById('episodios'));
 }
 
 function openArchive() {
   if (!episodeArchive || episodes.length <= HOME_EPISODE_COUNT) return;
   grid.hidden = true;
-  if (episodeArchiveCta) episodeArchiveCta.hidden = true;
   episodeArchive.hidden = false;
-  if (openArchiveTop) {
-    openArchiveTop.textContent = 'VOLTAR AOS RECENTES ←';
-    openArchiveTop.setAttribute('aria-expanded', 'true');
+  if (episodeArchiveBtn) {
+    episodeArchiveBtn.textContent = '← Voltar aos episódios recentes';
+    episodeArchiveBtn.setAttribute('aria-expanded', 'true');
   }
   renderArchive();
+  scrollArchiveToTop();
 }
 
 function closeArchive() {
   if (!episodeArchive) return;
   episodeArchive.hidden = true;
   grid.hidden = false;
-  if (episodeArchiveCta) episodeArchiveCta.hidden = episodes.length <= HOME_EPISODE_COUNT;
-  if (openArchiveTop) {
-    openArchiveTop.textContent = 'VER TODOS →';
-    openArchiveTop.setAttribute('aria-expanded', 'false');
+  if (episodeArchiveBtn) {
+    episodeArchiveBtn.textContent = 'Ver todos os episódios →';
+    episodeArchiveBtn.setAttribute('aria-expanded', 'false');
   }
+  scrollSectionIntoView(document.getElementById('episodios'));
 }
 
 function playEpisodeByIndex(index) {
@@ -388,8 +386,7 @@ player.addEventListener('ended', () => {
   currentTimeLabel.textContent = '00:00';
 });
 
-episodeArchiveBtn?.addEventListener('click', () => openArchive());
-openArchiveTop?.addEventListener('click', () => {
+episodeArchiveBtn?.addEventListener('click', () => {
   if (episodeArchive.hidden) openArchive();
   else closeArchive();
 });
@@ -423,11 +420,10 @@ loadFeed();
     if (window.location.hash) history.replaceState(null, '', cleanPath);
   }
 
-  function scrollToTarget(target) {
-    const header = document.getElementById('siteHeader');
-    const offset = (header?.offsetHeight || 0) + 22;
-    const top = target.getBoundingClientRect().top + window.scrollY - offset;
-    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  function setActiveMenu(id) {
+    menuLinks.forEach((link) => {
+      link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+    });
   }
 
   navLinks.forEach((link) => {
@@ -437,7 +433,8 @@ loadFeed();
       const target = document.querySelector(selector);
       if (!target) return;
       event.preventDefault();
-      scrollToTarget(target);
+      scrollSectionIntoView(target);
+      if (menuLinks.includes(link)) setActiveMenu(target.id);
       history.replaceState(null, '', cleanPath);
     });
   });
@@ -445,16 +442,31 @@ loadFeed();
   const observed = ['inicio', 'episodios', 'sobre', 'contato']
     .map((id) => document.getElementById(id))
     .filter(Boolean);
-  const observer = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-    if (!visible) return;
-    menuLinks.forEach((link) => {
-      link.classList.toggle('active', link.getAttribute('href') === `#${visible.target.id}`);
-    });
-  }, { rootMargin: '-20% 0px -60% 0px', threshold: [0, .2, .5] });
-  observed.forEach((section) => observer.observe(section));
+
+  let activeFrame = null;
+  function updateActiveSection() {
+    activeFrame = null;
+    const header = document.getElementById('siteHeader');
+    const marker = (header?.offsetHeight || 0) + 120;
+    let active = observed[0];
+
+    for (const section of observed) {
+      if (section.getBoundingClientRect().top <= marker) active = section;
+    }
+
+    const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
+    if (nearBottom) active = document.getElementById('contato') || active;
+    if (active) setActiveMenu(active.id);
+  }
+
+  function requestActiveUpdate() {
+    if (activeFrame !== null) return;
+    activeFrame = requestAnimationFrame(updateActiveSection);
+  }
+
+  window.addEventListener('scroll', requestActiveUpdate, { passive: true });
+  window.addEventListener('resize', requestActiveUpdate);
+  updateActiveSection();
 
   cleanUrl();
   window.addEventListener('hashchange', cleanUrl);
