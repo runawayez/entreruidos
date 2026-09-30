@@ -492,6 +492,7 @@ function setFeatured(ep, autoload = false) {
   featuredDuration.textContent = ep.duration || formatTime(parseDuration(ep.duration));
   featuredArt.src = resolveArt(ep);
   featuredArt.alt = `Arte do episódio ${ep.title || ''}`.trim();
+  if (miniTitle) miniTitle.textContent = ep.title || 'Entre Ruidos';
   if (spotifyEpisodeLink) spotifyEpisodeLink.href = ep.spotify || SPOTIFY_SHOW_URL;
   if (downloadEpisodeBtn) downloadEpisodeBtn.disabled = !ep.audio;
   player.playbackRate = PLAYBACK_RATES[playbackRateIndex];
@@ -623,7 +624,7 @@ async function downloadCurrentEpisode() {
   }
 }
 
-async function shareEpisode(ep = currentEpisode) {
+async function shareEpisode(ep = currentEpisode, feedbackButton = shareEpisodeBtn) {
   if (!ep) return;
   const shareUrl = absoluteEpisodeUrl(ep);
   const shareData = {
@@ -638,10 +639,10 @@ async function shareEpisode(ep = currentEpisode) {
       return;
     }
     await navigator.clipboard.writeText(`${shareData.text} ${shareUrl}`);
-    if (shareEpisodeBtn) {
-      const original = shareEpisodeBtn.textContent;
-      shareEpisodeBtn.textContent = '✓';
-      setTimeout(() => { shareEpisodeBtn.textContent = original; }, 1400);
+    if (feedbackButton) {
+      const original = feedbackButton.textContent;
+      feedbackButton.textContent = '✓';
+      setTimeout(() => { feedbackButton.textContent = original; }, 1400);
     }
   } catch {}
 }
@@ -702,7 +703,7 @@ detailRateBtn?.addEventListener('click', cyclePlaybackRate);
 miniRate?.addEventListener('click', cyclePlaybackRate);
 
 downloadEpisodeBtn?.addEventListener('click', downloadCurrentEpisode);
-shareEpisodeBtn?.addEventListener('click', () => shareEpisode(currentEpisode));
+shareEpisodeBtn?.addEventListener('click', () => shareEpisode(currentEpisode, shareEpisodeBtn));
 
 playBtn.addEventListener('click', () => togglePlayback(currentEpisode));
 detailPlayBtn?.addEventListener('click', () => togglePlayback(detailEpisode));
@@ -796,7 +797,7 @@ detailDownload?.addEventListener('click', () => {
   if (detailEpisode && currentEpisode !== detailEpisode) setFeatured(detailEpisode, false);
   downloadCurrentEpisode();
 });
-detailShare?.addEventListener('click', () => shareEpisode(detailEpisode));
+detailShare?.addEventListener('click', () => shareEpisode(detailEpisode, detailShare));
 
 miniClose?.addEventListener('click', () => {
   miniDismissed = true;
