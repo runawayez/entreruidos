@@ -41,7 +41,7 @@ const archivePages = document.getElementById('archivePages');
 
 const HOME_EPISODE_COUNT = 2;
 const ARCHIVE_PAGE_SIZE = 10;
-const FEATURED_DESCRIPTION_LIMIT = 220;
+const FEATURED_DESCRIPTION_LIMIT = 185;
 
 let episodes = [];
 let currentEpisode = null;
@@ -213,28 +213,38 @@ function renderArchive() {
     button.addEventListener('click', () => {
       archivePage = Number(button.dataset.page);
       renderArchive();
-      episodeArchive.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollArchiveToTop();
     });
   });
 }
 
-function openArchive({ scroll = true } = {}) {
+function scrollArchiveToTop() {
+  const header = document.getElementById('siteHeader');
+  const offset = (header?.offsetHeight || 0) + 18;
+  const top = episodeArchive.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+function openArchive() {
   if (!episodeArchive || episodes.length <= HOME_EPISODE_COUNT) return;
+  grid.hidden = true;
+  if (episodeArchiveCta) episodeArchiveCta.hidden = true;
   episodeArchive.hidden = false;
-  if (episodeArchiveBtn) {
-    episodeArchiveBtn.textContent = 'Ocultar arquivo';
-    episodeArchiveBtn.setAttribute('aria-expanded', 'true');
+  if (openArchiveTop) {
+    openArchiveTop.textContent = 'VOLTAR AOS RECENTES ←';
+    openArchiveTop.setAttribute('aria-expanded', 'true');
   }
   renderArchive();
-  if (scroll) episodeArchive.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function closeArchive() {
   if (!episodeArchive) return;
   episodeArchive.hidden = true;
-  if (episodeArchiveBtn) {
-    episodeArchiveBtn.textContent = 'Ver todos os episódios →';
-    episodeArchiveBtn.setAttribute('aria-expanded', 'false');
+  grid.hidden = false;
+  if (episodeArchiveCta) episodeArchiveCta.hidden = episodes.length <= HOME_EPISODE_COUNT;
+  if (openArchiveTop) {
+    openArchiveTop.textContent = 'VER TODOS →';
+    openArchiveTop.setAttribute('aria-expanded', 'false');
   }
 }
 
@@ -371,11 +381,11 @@ player.addEventListener('ended', () => {
   currentTimeLabel.textContent = '00:00';
 });
 
-episodeArchiveBtn?.addEventListener('click', () => {
+episodeArchiveBtn?.addEventListener('click', () => openArchive());
+openArchiveTop?.addEventListener('click', () => {
   if (episodeArchive.hidden) openArchive();
   else closeArchive();
 });
-openArchiveTop?.addEventListener('click', () => openArchive());
 episodeSearch?.addEventListener('input', (event) => {
   archiveQuery = event.target.value;
   archivePage = 1;
