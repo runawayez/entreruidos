@@ -115,22 +115,6 @@ input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6p
 }
 
 
-/* ===== Comece por aqui ===== */
-.start-here{padding:34px 0 12px}
-.start-title{align-items:flex-end}
-.start-title>p{margin:0;max-width:520px;color:#a99bad;line-height:1.6;font-size:14px;text-align:right}
-.start-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.start-card{
-  display:flex;flex-direction:column;gap:12px;min-height:220px;
-  padding:20px;border-radius:18px;
-  background:linear-gradient(180deg,rgba(15,10,21,.96),rgba(8,6,12,.98));
-  border:1px solid rgba(255,255,255,.09)
-}
-.start-card .start-number{font-size:10px;letter-spacing:.18em;color:#aa8fba;font-weight:800}
-.start-card h3{margin:0;font-family:'Fredoka',sans-serif;font-size:27px;line-height:1.08}
-.start-card p{margin:0;color:#bcaec2;line-height:1.6;font-size:14px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
-.start-card a{margin-top:auto;align-self:flex-start;text-decoration:none;color:#f1d8ff;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
-
 /* ===== Página individual de episódio ===== */
 .episode-detail{padding:44px 0 84px}
 .episode-detail-mode .home-section{display:none!important}
@@ -192,9 +176,7 @@ input[type="range"]{-webkit-appearance:none;appearance:none;width:100%;height:6p
 body.mini-player-open{padding-bottom:92px}
 
 @media(max-width:980px){
-  .start-grid{grid-template-columns:1fr 1fr}
-  .start-card:last-child{grid-column:1/-1}
-  .start-title>p{text-align:left}
+  
   .detail-hero{grid-template-columns:240px minmax(0,1fr);gap:24px}
   .detail-player{grid-template-columns:1fr}
   .detail-tools{justify-content:flex-start}
@@ -202,10 +184,7 @@ body.mini-player-open{padding-bottom:92px}
   .mini-volume{display:none}
 }
 @media(max-width:700px){
-  .start-here{padding-top:18px}
-  .start-title{align-items:flex-start;flex-direction:column}
-  .start-grid{grid-template-columns:1fr}
-  .start-card:last-child{grid-column:auto}
+  
   .detail-hero{grid-template-columns:1fr;padding:18px}
   .detail-art{width:min(360px,100%)}
   .detail-copy h1{font-size:42px}
