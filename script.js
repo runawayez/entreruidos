@@ -697,76 +697,72 @@ async function loadFeed() {
 rewind10Btn?.addEventListener('click', () => seekBy(-10));
 forward10Btn?.addEventListener('click', () => seekBy(10));
 
-playbackRateBtn?.addEventListener('click', () => {
-  playbackRateIndex = (playbackRateIndex + 1) % PLAYBACK_RATES.length;
-  const rate = PLAYBACK_RATES[playbackRateIndex];
-  player.playbackRate = rate;
-  playbackRateBtn.textContent = `${rate}x`;
-});
+playbackRateBtn?.addEventListener('click', cyclePlaybackRate);
+detailRateBtn?.addEventListener('click', cyclePlaybackRate);
+miniRate?.addEventListener('click', cyclePlaybackRate);
 
 downloadEpisodeBtn?.addEventListener('click', downloadCurrentEpisode);
 shareEpisodeBtn?.addEventListener('click', () => shareEpisode(currentEpisode));
 
-playBtn.addEventListener('click', async () => {
-  if (!currentEpisode?.audio) {
-    if (currentEpisode?.link) {
-      window.open(currentEpisode.link, '_blank');
-    } else {
-      window.open('https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg', '_blank');
-    }
-    return;
-  }
+playBtn.addEventListener('click', () => togglePlayback(currentEpisode));
+detailPlayBtn?.addEventListener('click', () => togglePlayback(detailEpisode));
+miniPlay?.addEventListener('click', () => togglePlayback(currentEpisode));
 
-  try {
-    if (player.paused) {
-      await player.play();
-      if (!rafId) rafId = requestAnimationFrame(updateProgress);
-    } else {
-      player.pause();
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = null;
-    }
-  } catch {}
-  updatePlayState();
+detailRewind10Btn?.addEventListener('click', () => {
+  if (detailEpisode && currentEpisode !== detailEpisode) setFeatured(detailEpisode, false);
+  seekBy(-10);
 });
+detailForward10Btn?.addEventListener('click', () => {
+  if (detailEpisode && currentEpisode !== detailEpisode) setFeatured(detailEpisode, false);
+  seekBy(10);
+});
+miniRewind?.addEventListener('click', () => seekBy(-10));
+miniForward?.addEventListener('click', () => seekBy(10));
 
-progressBar.addEventListener('input', (e) => {
+function seekFromRange(value) {
   const duration = player.duration || parseDuration(currentEpisode?.duration || '');
   if (!duration) return;
-  player.currentTime = (Number(e.target.value) / 100) * duration;
-  currentTimeLabel.textContent = formatTime(player.currentTime);
+  player.currentTime = (Number(value) / 100) * duration;
+  updateProgress();
+}
+progressBar.addEventListener('input', (e) => seekFromRange(e.target.value));
+detailProgressBar?.addEventListener('input', (e) => {
+  if (detailEpisode && currentEpisode !== detailEpisode) setFeatured(detailEpisode, false);
+  seekFromRange(e.target.value);
 });
+miniProgress?.addEventListener('input', (e) => seekFromRange(e.target.value));
 
-volumeBar.addEventListener('input', (e) => {
-  player.volume = Number(e.target.value);
-  player.muted = player.volume === 0;
-  muteBtn.textContent = player.muted ? '🔇' : '🔊';
-});
+volumeBar.addEventListener('input', (e) => setVolume(e.target.value));
+detailVolumeBar?.addEventListener('input', (e) => setVolume(e.target.value));
+miniVolume?.addEventListener('input', (e) => setVolume(e.target.value));
 
-muteBtn.addEventListener('click', () => {
+function toggleMute() {
   player.muted = !player.muted;
-  if (player.muted) {
-    muteBtn.textContent = '🔇';
-  } else {
-    muteBtn.textContent = '🔊';
-    if (player.volume === 0) {
-      player.volume = 1;
-      volumeBar.value = '1';
-    }
-  }
-});
+  if (!player.muted && player.volume === 0) player.volume = 1;
+  syncVolumeUI();
+}
+muteBtn.addEventListener('click', toggleMute);
+detailMuteBtn?.addEventListener('click', toggleMute);
+miniMute?.addEventListener('click', toggleMute);
 
 player.addEventListener('play', () => {
+  hasPlaybackSession = true;
+  miniDismissed = false;
   updatePlayState();
+  updateMiniVisibility();
   if (!rafId) rafId = requestAnimationFrame(updateProgress);
 });
 player.addEventListener('pause', () => {
   updatePlayState();
+  updateMiniVisibility();
   if (rafId) cancelAnimationFrame(rafId);
   rafId = null;
 });
 player.addEventListener('loadedmetadata', () => {
-  featuredDuration.textContent = formatTime(player.duration);
+  const duration = formatTime(player.duration);
+  featuredDuration.textContent = duration;
+  if (detailEpisode === currentEpisode) detailDurationTime.textContent = duration;
+  updateProgress();
 });
 player.addEventListener('ended', () => {
   updatePlayState();
@@ -795,7 +791,30 @@ archiveNext?.addEventListener('click', () => {
   renderArchive();
 });
 
+detailBack?.addEventListener('click', () => showHome({ targetId: 'episodios' }));
+detailDownload?.addEventListener('click', () => {
+  if (detailEpisode && currentEpisode !== detailEpisode) setFeatured(detailEpisode, false);
+  downloadCurrentEpisode();
+});
+detailShare?.addEventListener('click', () => shareEpisode(detailEpisode));
+
+miniClose?.addEventListener('click', () => {
+  miniDismissed = true;
+  updateMiniVisibility();
+});
+
+const fullPlayerObserver = new IntersectionObserver((entries) => {
+  fullPlayerVisible = entries.some((entry) => entry.isIntersecting && !entry.target.closest('[hidden]'));
+  updateMiniVisibility();
+}, { threshold: 0.12 });
+document.getElementById('featuredEpisode') && fullPlayerObserver.observe(document.getElementById('featuredEpisode'));
+detailPlayerPanel && fullPlayerObserver.observe(detailPlayerPanel);
+
+window.addEventListener('popstate', () => handleRoute());
+
 player.volume = Number(volumeBar.value);
+syncVolumeUI();
+syncRateUI();
 loadFeed();
 
 // Navegação de página única: scroll alinhado ao header e URL sempre limpa.
