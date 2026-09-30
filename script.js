@@ -186,6 +186,7 @@ function renderHomeEpisodes() {
       <p>${esc(ep.description || '')}</p>
       <div class="episode-actions">
         <button type="button" class="small-btn primary" data-play-index="${index}">Ouvir</button>
+        <a class="small-btn" href="${episodePath(ep)}" data-detail-index="${index}">Detalhes</a>
       </div>
       <div class="episode-meta">
         <span>${ep.date ? formatDate(ep.date) : ''}</span>
@@ -197,9 +198,49 @@ function renderHomeEpisodes() {
   grid.querySelectorAll('[data-play-index]').forEach((button) => {
     button.addEventListener('click', () => playEpisodeByIndex(Number(button.dataset.playIndex)));
   });
+  grid.querySelectorAll('[data-detail-index]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      openEpisodeDetail(episodes[Number(link.dataset.detailIndex)]);
+    });
+  });
 
   const hasArchive = episodes.length > HOME_EPISODE_COUNT;
   if (episodeArchiveCta) episodeArchiveCta.hidden = !hasArchive;
+}
+
+function renderStartHere() {
+  if (!startGrid || !episodes.length) return;
+
+  const preferred = ['persona', 'bolha', 'tecnologia'];
+  const selected = [];
+  for (const key of preferred) {
+    const found = episodes.find((ep) => slugify(ep.title).includes(key) && !selected.includes(ep));
+    if (found) selected.push(found);
+  }
+  for (const ep of episodes) {
+    if (selected.length >= 3) break;
+    if (!selected.includes(ep)) selected.push(ep);
+  }
+
+  startGrid.innerHTML = selected.slice(0, 3).map((ep) => {
+    const index = episodes.indexOf(ep);
+    return `
+      <article class="start-card">
+        <span class="start-number">EP. ${episodeNumber(index)}</span>
+        <h3>${esc(ep.title)}</h3>
+        <p>${esc(ep.description || '')}</p>
+        <a href="${episodePath(ep)}" data-start-detail="${index}">Conhecer episódio →</a>
+      </article>
+    `;
+  }).join('');
+
+  startGrid.querySelectorAll('[data-start-detail]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      openEpisodeDetail(episodes[Number(link.dataset.startDetail)]);
+    });
+  });
 }
 
 function getFilteredEpisodes() {
