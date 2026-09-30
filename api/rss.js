@@ -13,6 +13,12 @@ function ensureArray(value) {
   return Array.isArray(value) ? value : [value];
 }
 
+function findSpotifyEpisodeUrl(item = {}) {
+  const raw = JSON.stringify(item);
+  const match = raw.match(/https:\/\/open\.spotify\.com\/episode\/[A-Za-z0-9]+(?:\?[^"\\]*)?/i);
+  return match?.[0] || '';
+}
+
 function pickImage(item = {}, channel = {}) {
   const fromItem =
     item['itunes:image']?.href ||
@@ -49,9 +55,9 @@ module.exports = async function handler(req, res) {
       duration: item['itunes:duration'] || '',
       audio: item.enclosure?.url || '',
       link: item.link || '',
-      spotify: String(item.link || '').includes('open.spotify.com/')
-        ? item.link
-        : 'https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg',
+      spotify: findSpotifyEpisodeUrl(item)
+        || (String(item.link || '').includes('open.spotify.com/') ? item.link : '')
+        || 'https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg',
       image: pickImage(item, channel)
     }));
 
