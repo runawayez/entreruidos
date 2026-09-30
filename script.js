@@ -18,6 +18,43 @@ const FALLBACK = [
 ];
 
 const grid = document.getElementById('episodeGrid');
+const startGrid = document.getElementById('startGrid');
+const episodeDetail = document.getElementById('episodeDetail');
+const detailBack = document.getElementById('detailBack');
+const detailArt = document.getElementById('detailArt');
+const detailLabel = document.getElementById('detailLabel');
+const detailTitle = document.getElementById('detailTitle');
+const detailDate = document.getElementById('detailDate');
+const detailDuration = document.getElementById('detailDuration');
+const detailDescription = document.getElementById('detailDescription');
+const detailFullDescription = document.getElementById('detailFullDescription');
+const detailRelated = document.getElementById('detailRelated');
+const detailPlayerPanel = document.getElementById('detailPlayerPanel');
+const detailPlayBtn = document.getElementById('detailPlayBtn');
+const detailRewind10Btn = document.getElementById('detailRewind10Btn');
+const detailForward10Btn = document.getElementById('detailForward10Btn');
+const detailProgressBar = document.getElementById('detailProgressBar');
+const detailCurrentTime = document.getElementById('detailCurrentTime');
+const detailDurationTime = document.getElementById('detailDurationTime');
+const detailRateBtn = document.getElementById('detailRateBtn');
+const detailMuteBtn = document.getElementById('detailMuteBtn');
+const detailVolumeBar = document.getElementById('detailVolumeBar');
+const detailSpotify = document.getElementById('detailSpotify');
+const detailYouTube = document.getElementById('detailYouTube');
+const detailDownload = document.getElementById('detailDownload');
+const detailShare = document.getElementById('detailShare');
+
+const miniPlayer = document.getElementById('miniPlayer');
+const miniTitle = document.getElementById('miniTitle');
+const miniRewind = document.getElementById('miniRewind');
+const miniPlay = document.getElementById('miniPlay');
+const miniForward = document.getElementById('miniForward');
+const miniProgress = document.getElementById('miniProgress');
+const miniTime = document.getElementById('miniTime');
+const miniRate = document.getElementById('miniRate');
+const miniMute = document.getElementById('miniMute');
+const miniVolume = document.getElementById('miniVolume');
+const miniClose = document.getElementById('miniClose');
 const player = document.getElementById('audioPlayer');
 const featuredLabel = document.getElementById('featuredLabel');
 const featuredTitle = document.getElementById('featuredTitle');
@@ -54,9 +91,34 @@ let currentEpisode = null;
 let rafId = null;
 let archivePage = 1;
 let archiveQuery = '';
+let detailEpisode = null;
+let hasPlaybackSession = false;
+let miniDismissed = false;
+let fullPlayerVisible = true;
 const PLAYBACK_RATES = [1, 1.5, 2];
 let playbackRateIndex = 0;
 const SPOTIFY_SHOW_URL = 'https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg';
+
+function slugify(value = '') {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function episodePath(ep = {}) {
+  return `/episodios/${slugify(ep.title || 'episodio')}`;
+}
+
+function absoluteEpisodeUrl(ep = {}) {
+  return new URL(episodePath(ep), window.location.origin).href;
+}
+
+function episodeBySlug(slug = '') {
+  return episodes.find((ep) => slugify(ep.title) === slug) || null;
+}
 
 function esc(s = '') {
   return String(s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
