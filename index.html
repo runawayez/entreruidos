@@ -80,14 +80,32 @@
                 <h2 id="featuredTitle">Bolha vs Realidade</h2>
                 <p id="featuredDescription">Neste episódio, falamos sobre o apego às nossas “bolhas”, a nova forma de viver no mundo digital e as diferentes maneiras de enxergar e lidar com a realidade.</p>
                 <div class="player-panel">
-                  <button class="play" id="featuredPlay" type="button" aria-label="Reproduzir episódio">▶</button>
+                  <div class="transport-cluster" aria-label="Controles de reprodução">
+                    <button class="transport-btn skip-btn" id="rewind10Btn" type="button" aria-label="Retroceder 10 segundos">
+                      <span class="skip-arrow">↶</span><span class="skip-number">10</span>
+                    </button>
+                    <button class="play" id="featuredPlay" type="button" aria-label="Reproduzir episódio">▶</button>
+                    <button class="transport-btn skip-btn" id="forward10Btn" type="button" aria-label="Avançar 10 segundos">
+                      <span class="skip-number">10</span><span class="skip-arrow">↷</span>
+                    </button>
+                  </div>
+
                   <div class="player-main">
                     <div class="time-group"><span id="currentTime">00:00</span><span class="slash">/</span><span id="featuredDuration">00:00</span></div>
                     <input type="range" id="progressBar" min="0" max="100" step="0.1" value="0" aria-label="Progresso do episódio" />
                   </div>
-                  <div class="volume-wrap">
-                    <button class="icon-btn" id="muteBtn" type="button" aria-label="Ativar ou desativar som">🔊</button>
-                    <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
+
+                  <div class="player-tools">
+                    <button class="player-tool rate-btn" id="playbackRateBtn" type="button" aria-label="Alterar velocidade de reprodução">1x</button>
+                    <div class="volume-wrap">
+                      <button class="icon-btn" id="muteBtn" type="button" aria-label="Ativar ou desativar som">🔊</button>
+                      <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
+                    </div>
+                    <button class="player-tool" id="downloadEpisodeBtn" type="button" aria-label="Baixar episódio" title="Baixar episódio">↓</button>
+                    <button class="player-tool" id="shareEpisodeBtn" type="button" aria-label="Compartilhar episódio" title="Compartilhar episódio">↗</button>
+                    <a class="player-tool spotify-tool" id="spotifyEpisodeLink" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer" aria-label="Abrir no Spotify" title="Abrir no Spotify">
+                      <img src="/assets/spotify.svg" alt="" aria-hidden="true" />
+                    </a>
                   </div>
                 </div>
               </div>
