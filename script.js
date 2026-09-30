@@ -294,6 +294,7 @@ function renderArchive() {
         </div>
         <div class="archive-actions">
           <button type="button" class="small-btn primary" data-archive-play-index="${index}">Ouvir</button>
+          <a class="small-btn" href="${episodePath(ep)}" data-archive-detail-index="${index}">Detalhes</a>
         </div>
       </article>
     `).join('');
@@ -301,6 +302,12 @@ function renderArchive() {
 
   archiveList.querySelectorAll('[data-archive-play-index]').forEach((button) => {
     button.addEventListener('click', () => playEpisodeByIndex(Number(button.dataset.archivePlayIndex)));
+  });
+  archiveList.querySelectorAll('[data-archive-detail-index]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      openEpisodeDetail(episodes[Number(link.dataset.archiveDetailIndex)]);
+    });
   });
 
   archivePrev.disabled = archivePage <= 1;
