@@ -41,7 +41,7 @@ module.exports = async function handler(req, res) {
     const channel = data?.rss?.channel || {};
     const items = ensureArray(channel.item);
 
-    const episodes = items.slice(0, 12).map((item, index) => ({
+    const episodes = items.map((item, index) => ({
       index: index + 1,
       title: item.title || `Episódio ${index + 1}`,
       description: stripHtml(item.description || item['itunes:summary'] || item['content:encoded'] || ''),
