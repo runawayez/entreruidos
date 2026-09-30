@@ -291,6 +291,12 @@ function renderArchive() {
   });
 }
 
+function setHeaderActive(id) {
+  document.querySelectorAll('.main-nav .nav-scroll').forEach((link) => {
+    link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+  });
+}
+
 function scrollSectionIntoView(target) {
   if (!target) return;
   const header = document.getElementById('siteHeader');
@@ -402,6 +408,7 @@ function openEpisodeDetail(ep, { push = true } = {}) {
   if (!ep || !episodeDetail) return;
   populateEpisodeDetail(ep);
   document.body.classList.add('episode-detail-mode');
+  setHeaderActive('episodios');
   episodeDetail.hidden = false;
   if (push) history.pushState({ episode: slugify(ep.title) }, '', episodePath(ep));
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -792,9 +799,7 @@ loadFeed();
   }
 
   function setActiveMenu(id) {
-    menuLinks.forEach((link) => {
-      link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
-    });
+    setHeaderActive(id);
   }
 
   navLinks.forEach((link) => {
@@ -823,6 +828,12 @@ loadFeed();
   let activeFrame = null;
   function updateActiveSection() {
     activeFrame = null;
+
+    if (document.body.classList.contains('episode-detail-mode')) {
+      setActiveMenu('episodios');
+      return;
+    }
+
     const header = document.getElementById('siteHeader');
     const marker = (header?.offsetHeight || 0) + 120;
     let active = observed[0];
