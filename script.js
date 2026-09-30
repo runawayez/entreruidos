@@ -285,6 +285,8 @@ function setFeatured(ep, autoload = false) {
     player.removeAttribute('src');
     player.load();
   }
+  player.playbackRate = PLAYBACK_RATES[playbackRateIndex];
+  player.defaultPlaybackRate = PLAYBACK_RATES[playbackRateIndex];
 
   resetPlayerUI();
   if (autoload && ep.audio) {
@@ -307,7 +309,8 @@ function seekBy(seconds) {
   const duration = player.duration || parseDuration(currentEpisode?.duration || '');
   const next = Math.max(0, Math.min(duration || Infinity, (player.currentTime || 0) + seconds));
   player.currentTime = next;
-  updateProgress();
+  currentTimeLabel.textContent = formatTime(next);
+  progressBar.value = duration ? (next / duration) * 100 : 0;
 }
 
 function safeFilename(value = 'episodio') {
