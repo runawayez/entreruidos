@@ -19,6 +19,7 @@ const FALLBACK = [
 
 const grid = document.getElementById('episodeGrid');
 const player = document.getElementById('audioPlayer');
+const featuredLabel = document.getElementById('featuredLabel');
 const featuredTitle = document.getElementById('featuredTitle');
 const featuredDescription = document.getElementById('featuredDescription');
 const featuredDuration = document.getElementById('featuredDuration');
@@ -257,6 +258,12 @@ function playEpisodeByIndex(index) {
 
 function setFeatured(ep, autoload = false) {
   currentEpisode = ep;
+  const episodeIndex = episodes.indexOf(ep);
+  if (featuredLabel) {
+    featuredLabel.textContent = episodeIndex === 0
+      ? 'EPISÓDIO MAIS RECENTE'
+      : `EPISÓDIO ${episodeNumber(episodeIndex)}`;
+  }
   featuredTitle.textContent = ep.title || 'Novo episódio';
   featuredDescription.textContent = truncateText(ep.description || 'Novo episódio do Entre Ruidos.');
   featuredDuration.textContent = ep.duration || formatTime(parseDuration(ep.duration));
@@ -357,8 +364,8 @@ muteBtn.addEventListener('click', () => {
   } else {
     muteBtn.textContent = '🔊';
     if (player.volume === 0) {
-      player.volume = 0.9;
-      volumeBar.value = '0.9';
+      player.volume = 1;
+      volumeBar.value = '1';
     }
   }
 });
