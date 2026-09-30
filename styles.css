@@ -30,11 +30,11 @@ a{color:inherit} img{max-width:100%;display:block} button,input{font:inherit}.sh
 .hero-backdrop{position:absolute;z-index:-2;inset:0;background:
   linear-gradient(90deg,rgba(7,5,11,.82) 0%,rgba(7,5,11,.46) 38%,rgba(7,5,11,.34) 68%,rgba(7,5,11,.62) 100%),
   linear-gradient(180deg,rgba(7,5,11,.35) 0%,rgba(7,5,11,.20) 45%,#08060c 100%),
-  url('/assets/section-bg.png') center 44% / cover no-repeat;
-  filter:saturate(.72) contrast(.92) brightness(.76);
-  transform:scale(1.015);
+  url('/assets/hero-bg-moon.jpg') center 48% / cover no-repeat;
+  filter:saturate(.82) contrast(.96) brightness(.70);
+  transform:scale(1.01);
 }
-.hero::before{content:'';position:absolute;z-index:-1;inset:0;background:radial-gradient(circle at 32% 46%,rgba(184,72,220,.13),transparent 30%),radial-gradient(circle at 68% 50%,rgba(255,101,87,.08),transparent 30%);pointer-events:none}
+.hero::before{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(7,5,11,.20),rgba(7,5,11,.04) 48%,rgba(7,5,11,.24));pointer-events:none}
 .hero::after{content:'';position:absolute;inset:auto 0 0;height:190px;background:linear-gradient(180deg,transparent,#08060c);pointer-events:none}
 .hero-grid{position:relative;display:grid;grid-template-columns:minmax(420px,650px) minmax(420px,1fr);gap:42px;align-items:center;min-height:720px}
 .hero-visual{position:relative}.hero-cover{position:relative;width:min(610px,100%);margin:0 auto;border-radius:28px;box-shadow:0 30px 100px rgba(0,0,0,.52)}
