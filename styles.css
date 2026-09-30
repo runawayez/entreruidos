@@ -28,16 +28,16 @@ a{color:inherit} img{max-width:100%;display:block} button,input{font:inherit}.sh
 
 .hero{position:relative;isolation:isolate;padding:34px 0 82px;background:#08060c;overflow:hidden}
 .hero-backdrop{position:absolute;z-index:-2;inset:0;background:
-  linear-gradient(90deg,rgba(7,5,11,.82) 0%,rgba(7,5,11,.46) 38%,rgba(7,5,11,.34) 68%,rgba(7,5,11,.62) 100%),
-  linear-gradient(180deg,rgba(7,5,11,.35) 0%,rgba(7,5,11,.20) 45%,#08060c 100%),
-  url('/assets/section-bg.png') center 44% / cover no-repeat;
-  filter:saturate(.72) contrast(.92) brightness(.76);
-  transform:scale(1.015);
+  linear-gradient(90deg,rgba(7,5,11,.72) 0%,rgba(7,5,11,.30) 38%,rgba(7,5,11,.24) 68%,rgba(7,5,11,.58) 100%),
+  linear-gradient(180deg,rgba(7,5,11,.18) 0%,rgba(7,5,11,.10) 46%,#08060c 100%),
+  url('/assets/hero-bg-gospel.jpg') center 46% / cover no-repeat;
+  filter:saturate(1.08) contrast(1.02) brightness(.86);
+  transform:scale(1.02);
 }
-.hero::before{content:'';position:absolute;z-index:-1;inset:0;background:radial-gradient(circle at 32% 46%,rgba(184,72,220,.13),transparent 30%),radial-gradient(circle at 68% 50%,rgba(255,101,87,.08),transparent 30%);pointer-events:none}
+.hero::before{content:'';position:absolute;z-index:-1;inset:0;background:radial-gradient(circle at 18% 38%,rgba(255,89,178,.15),transparent 28%),radial-gradient(circle at 74% 32%,rgba(124,73,255,.13),transparent 34%);pointer-events:none}
 .hero::after{content:'';position:absolute;inset:auto 0 0;height:190px;background:linear-gradient(180deg,transparent,#08060c);pointer-events:none}
 .hero-grid{position:relative;display:grid;grid-template-columns:minmax(420px,650px) minmax(420px,1fr);gap:42px;align-items:center;min-height:720px}
-.hero-visual{position:relative}.hero-cover{position:relative;width:min(610px,100%);margin:0 auto;border-radius:28px;box-shadow:0 30px 100px rgba(0,0,0,.52)}
+.hero-visual{position:relative}.hero-cover{position:relative;width:min(610px,100%);margin:0 auto;border-radius:24px;border:1px solid rgba(255,255,255,.08);box-shadow:0 34px 110px rgba(0,0,0,.56)}
 .hero-content{position:relative;z-index:2}.eyebrow{margin:0;color:#e1d2e4;font-size:12px;letter-spacing:.22em;font-weight:700}.hero h1{margin:22px 0 18px;font-family:'Fredoka',sans-serif;font-size:clamp(76px,8.2vw,150px);line-height:.8;letter-spacing:-.04em}.hero h1 span{display:block;color:#ffe8cf}.tagline{margin:0;color:#f0e4f0;text-transform:uppercase;letter-spacing:.22em;line-height:1.7;font-size:16px}
 .hero-action-stack{width:100%;max-width:100%}.cta-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:28px 0 10px}.button{display:inline-flex;gap:10px;align-items:center;justify-content:center;width:100%;min-height:50px;padding:13px 14px;border-radius:14px;border:1px solid #67556f;background:rgba(10,7,14,.90);text-transform:uppercase;letter-spacing:.08em;font-size:11px;font-weight:800;text-decoration:none;white-space:nowrap}.service-icon{display:block;width:20px;height:20px;object-fit:contain;flex:0 0 auto}.button.spotify{border-color:#24d887;color:#dfffee}.button.youtube{border-color:#ff5b76;color:#ffe5ea}.button.rss{border-color:#a84cff;color:#f1e1ff}.button:hover{transform:translateY(-1px);background:rgba(18,12,24,.96)}
 .glass{background:linear-gradient(135deg,rgba(13,9,18,.96),rgba(8,6,12,.94));border:1px solid var(--line);box-shadow:0 28px 90px rgba(0,0,0,.36)}
