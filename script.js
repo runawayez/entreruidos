@@ -520,7 +520,63 @@ function resetPlayerUI() {
 }
 
 function updatePlayState() {
-  playBtn.textContent = player.paused ? '▶' : 'Ⅱ';
+  const glyph = player.paused ? '▶' : 'Ⅱ';
+  playBtn.textContent = glyph;
+  if (miniPlay) miniPlay.textContent = glyph;
+  if (detailPlayBtn) {
+    detailPlayBtn.textContent = currentEpisode && detailEpisode === currentEpisode ? glyph : '▶';
+  }
+}
+
+function syncRateUI() {
+  const label = `${PLAYBACK_RATES[playbackRateIndex]}x`;
+  playbackRateBtn.textContent = label;
+  if (detailRateBtn) detailRateBtn.textContent = label;
+  if (miniRate) miniRate.textContent = label;
+}
+
+function cyclePlaybackRate() {
+  playbackRateIndex = (playbackRateIndex + 1) % PLAYBACK_RATES.length;
+  const rate = PLAYBACK_RATES[playbackRateIndex];
+  player.playbackRate = rate;
+  player.defaultPlaybackRate = rate;
+  syncRateUI();
+}
+
+function syncVolumeUI() {
+  const value = String(player.volume);
+  volumeBar.value = value;
+  if (detailVolumeBar) detailVolumeBar.value = value;
+  if (miniVolume) miniVolume.value = value;
+  const icon = player.muted || player.volume === 0 ? '🔇' : '🔊';
+  muteBtn.textContent = icon;
+  if (detailMuteBtn) detailMuteBtn.textContent = icon;
+  if (miniMute) miniMute.textContent = icon;
+}
+
+function setVolume(value) {
+  player.volume = Number(value);
+  player.muted = player.volume === 0;
+  syncVolumeUI();
+}
+
+async function togglePlayback(ep = currentEpisode) {
+  if (!ep) return;
+  if (currentEpisode !== ep) setFeatured(ep, false);
+  if (!currentEpisode?.audio) return;
+
+  try {
+    if (player.paused) {
+      hasPlaybackSession = true;
+      miniDismissed = false;
+      await player.play();
+      if (!rafId) rafId = requestAnimationFrame(updateProgress);
+    } else {
+      player.pause();
+    }
+  } catch {}
+  updatePlayState();
+  updateMiniVisibility();
 }
 
 function seekBy(seconds) {
@@ -567,12 +623,12 @@ async function downloadCurrentEpisode() {
   }
 }
 
-async function shareCurrentEpisode() {
-  if (!currentEpisode) return;
-  const shareUrl = currentEpisode.spotify || SPOTIFY_SHOW_URL;
+async function shareEpisode(ep = currentEpisode) {
+  if (!ep) return;
+  const shareUrl = absoluteEpisodeUrl(ep);
   const shareData = {
-    title: `${currentEpisode.title} — Entre Ruidos`,
-    text: `Ouça "${currentEpisode.title}" no Entre Ruidos.`,
+    title: `${ep.title} — Entre Ruidos`,
+    text: `Ouça "${ep.title}" no Entre Ruidos.`,
     url: shareUrl
   };
 
@@ -590,12 +646,32 @@ async function shareCurrentEpisode() {
   } catch {}
 }
 
+function updateMiniVisibility() {
+  const shouldShow = hasPlaybackSession && !miniDismissed && !fullPlayerVisible;
+  if (miniPlayer) miniPlayer.hidden = !shouldShow;
+  document.body.classList.toggle('mini-player-open', shouldShow);
+}
+
 function updateProgress() {
   const duration = player.duration || parseDuration(currentEpisode?.duration || '');
   const current = player.currentTime || 0;
-  currentTimeLabel.textContent = formatTime(current);
-  featuredDuration.textContent = duration ? formatTime(duration) : (currentEpisode?.duration || '00:00');
-  progressBar.value = duration ? (current / duration) * 100 : 0;
+  const formattedCurrent = formatTime(current);
+  const formattedDuration = duration ? formatTime(duration) : (currentEpisode?.duration || '00:00');
+  const percent = duration ? (current / duration) * 100 : 0;
+
+  currentTimeLabel.textContent = formattedCurrent;
+  featuredDuration.textContent = formattedDuration;
+  progressBar.value = percent;
+
+  if (detailEpisode === currentEpisode) {
+    detailCurrentTime.textContent = formattedCurrent;
+    detailDurationTime.textContent = formattedDuration;
+    detailProgressBar.value = percent;
+  }
+  if (miniTime) miniTime.textContent = `${formattedCurrent} / ${formattedDuration}`;
+  if (miniProgress) miniProgress.value = percent;
+  if (miniTitle && currentEpisode) miniTitle.textContent = currentEpisode.title || 'Entre Ruidos';
+
   rafId = !player.paused ? requestAnimationFrame(updateProgress) : null;
 }
 
@@ -613,7 +689,9 @@ async function loadFeed() {
   }
 
   renderHomeEpisodes();
+  renderStartHere();
   setFeatured(episodes[0] || FALLBACK[0]);
+  handleRoute();
 }
 
 rewind10Btn?.addEventListener('click', () => seekBy(-10));
@@ -627,7 +705,7 @@ playbackRateBtn?.addEventListener('click', () => {
 });
 
 downloadEpisodeBtn?.addEventListener('click', downloadCurrentEpisode);
-shareEpisodeBtn?.addEventListener('click', shareCurrentEpisode);
+shareEpisodeBtn?.addEventListener('click', () => shareEpisode(currentEpisode));
 
 playBtn.addEventListener('click', async () => {
   if (!currentEpisode?.audio) {
