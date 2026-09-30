@@ -49,6 +49,9 @@ module.exports = async function handler(req, res) {
       duration: item['itunes:duration'] || '',
       audio: item.enclosure?.url || '',
       link: item.link || '',
+      spotify: String(item.link || '').includes('open.spotify.com/')
+        ? item.link
+        : 'https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg',
       image: pickImage(item, channel)
     }));
 
