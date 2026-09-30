@@ -364,6 +364,114 @@ function closeArchive() {
   scrollSectionIntoView(document.getElementById('episodios'));
 }
 
+function renderRelatedEpisodes(ep) {
+  if (!detailRelated) return;
+  const currentIndex = episodes.indexOf(ep);
+  const related = episodes.filter((item) => item !== ep).slice(
+    Math.max(0, currentIndex - 1),
+    Math.max(0, currentIndex - 1) + 2
+  );
+  const items = related.length >= 2 ? related : episodes.filter((item) => item !== ep).slice(0, 2);
+
+  detailRelated.innerHTML = items.map((item) => {
+    const index = episodes.indexOf(item);
+    return `
+      <article class="episode-card">
+        <div class="episode-top">
+          <span>EP. ${episodeNumber(index)}</span>
+          <span>${esc(item.duration || '—')}</span>
+        </div>
+        <h3>${esc(item.title)}</h3>
+        <p>${esc(item.description || '')}</p>
+        <div class="episode-actions">
+          <button type="button" class="small-btn primary" data-related-play="${index}">Ouvir</button>
+          <a class="small-btn" href="${episodePath(item)}" data-related-detail="${index}">Detalhes</a>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  detailRelated.querySelectorAll('[data-related-play]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const target = episodes[Number(button.dataset.relatedPlay)];
+      if (!target) return;
+      detailEpisode = target;
+      populateEpisodeDetail(target);
+      setFeatured(target, true);
+    });
+  });
+  detailRelated.querySelectorAll('[data-related-detail]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      openEpisodeDetail(episodes[Number(link.dataset.relatedDetail)]);
+    });
+  });
+}
+
+function populateEpisodeDetail(ep) {
+  if (!ep || !episodeDetail) return;
+  detailEpisode = ep;
+  const index = episodes.indexOf(ep);
+  detailArt.src = resolveArt(ep);
+  detailArt.alt = `Arte do episódio ${ep.title || ''}`.trim();
+  detailLabel.textContent = `EPISÓDIO ${episodeNumber(index)}`;
+  detailTitle.textContent = ep.title || 'Entre Ruidos';
+  detailDate.textContent = ep.date ? formatDate(ep.date) : '';
+  detailDuration.textContent = ep.duration || '';
+  detailDescription.textContent = truncateText(ep.description || '', 300);
+  detailFullDescription.textContent = ep.description || 'Sem descrição disponível para este episódio.';
+  detailSpotify.href = ep.spotify || SPOTIFY_SHOW_URL;
+  detailYouTube.href = 'https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9';
+  detailDownload.disabled = !ep.audio;
+  detailDurationTime.textContent = ep.duration || '00:00';
+  detailProgressBar.value = currentEpisode === ep ? progressBar.value : 0;
+  detailCurrentTime.textContent = currentEpisode === ep ? currentTimeLabel.textContent : '00:00';
+  renderRelatedEpisodes(ep);
+
+  document.title = `${ep.title} — Entre Ruidos`;
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', truncateText(ep.description || 'Episódio do Entre Ruidos.', 155));
+}
+
+function openEpisodeDetail(ep, { push = true } = {}) {
+  if (!ep || !episodeDetail) return;
+  populateEpisodeDetail(ep);
+  document.body.classList.add('episode-detail-mode');
+  episodeDetail.hidden = false;
+  if (push) history.pushState({ episode: slugify(ep.title) }, '', episodePath(ep));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateMiniVisibility();
+}
+
+function showHome({ push = true, targetId = 'episodios' } = {}) {
+  document.body.classList.remove('episode-detail-mode');
+  if (episodeDetail) episodeDetail.hidden = true;
+  detailEpisode = null;
+  document.title = 'Entre Ruidos';
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', 'Entre Ruidos — conversas para quem pensa demais quando tudo fica em silêncio.');
+  if (push) history.pushState({}, '', '/');
+  requestAnimationFrame(() => {
+    const target = document.getElementById(targetId);
+    if (target) scrollSectionIntoView(target);
+  });
+  updateMiniVisibility();
+}
+
+function handleRoute() {
+  const match = window.location.pathname.match(/^\/episodios\/([^/]+)\/?$/);
+  if (match) {
+    const ep = episodeBySlug(decodeURIComponent(match[1]));
+    if (ep) {
+      openEpisodeDetail(ep, { push: false });
+      return;
+    }
+  }
+  if (document.body.classList.contains('episode-detail-mode')) {
+    showHome({ push: false, targetId: 'inicio' });
+  }
+}
+
 function playEpisodeByIndex(index) {
   const ep = episodes[index];
   if (!ep) return;
