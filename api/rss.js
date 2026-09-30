@@ -13,6 +13,10 @@ function ensureArray(value) {
   return Array.isArray(value) ? value : [value];
 }
 
+function spotifySearchUrl(title = '') {
+  return `https://open.spotify.com/search/${encodeURIComponent(`${title} Entre Ruidos`)}/episodes`;
+}
+
 function findSpotifyEpisodeUrl(item = {}) {
   const raw = JSON.stringify(item);
   const match = raw.match(/https:\/\/open\.spotify\.com\/episode\/[A-Za-z0-9]+(?:\?[^"\\]*)?/i);
@@ -56,8 +60,8 @@ module.exports = async function handler(req, res) {
       audio: item.enclosure?.url || '',
       link: item.link || '',
       spotify: findSpotifyEpisodeUrl(item)
-        || (String(item.link || '').includes('open.spotify.com/') ? item.link : '')
-        || 'https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg',
+        || (String(item.link || '').includes('open.spotify.com/episode/') ? item.link : '')
+        || spotifySearchUrl(item.title || `Episódio ${index + 1}`),
       image: pickImage(item, channel)
     }));
 
