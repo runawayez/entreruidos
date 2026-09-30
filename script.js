@@ -28,8 +28,14 @@ const progressBar = document.getElementById('progressBar');
 const volumeBar = document.getElementById('volumeBar');
 const muteBtn = document.getElementById('muteBtn');
 const currentTimeLabel = document.getElementById('currentTime');
+const episodeMoreWrap = document.getElementById('episodeMoreWrap');
+const episodeMoreBtn = document.getElementById('episodeMoreBtn');
+
+const INITIAL_EPISODE_COUNT = 2;
+const EPISODE_BATCH_SIZE = 4;
 
 let episodes = [];
+let visibleEpisodeCount = INITIAL_EPISODE_COUNT;
 let currentEpisode = null;
 let rafId = null;
 
@@ -88,7 +94,9 @@ function resolveArt(ep = {}) {
   return ep.image || '/assets/cover.png';
 }
 
-function renderEpisodes(items) {
+function renderEpisodes() {
+  const items = episodes.slice(0, visibleEpisodeCount);
+
   grid.innerHTML = items.map((ep, index) => `
     <article class="episode-card">
       <div class="episode-top">
@@ -110,13 +118,16 @@ function renderEpisodes(items) {
 
   grid.querySelectorAll('[data-play-index]').forEach((button) => {
     button.addEventListener('click', () => {
-      const ep = items[Number(button.dataset.playIndex)];
+      const ep = episodes[Number(button.dataset.playIndex)];
       if (ep) {
         setFeatured(ep, true);
         document.getElementById('featuredEpisode')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
   });
+
+  const hasMore = visibleEpisodeCount < episodes.length;
+  if (episodeMoreWrap) episodeMoreWrap.hidden = !hasMore;
 }
 
 function setFeatured(ep, autoload = false) {
@@ -174,7 +185,8 @@ async function loadFeed() {
     episodes = FALLBACK;
   }
 
-  renderEpisodes(episodes);
+  visibleEpisodeCount = INITIAL_EPISODE_COUNT;
+  renderEpisodes();
   setFeatured(episodes[0] || FALLBACK[0]);
 }
 
@@ -243,6 +255,11 @@ player.addEventListener('ended', () => {
   updatePlayState();
   progressBar.value = 0;
   currentTimeLabel.textContent = '00:00';
+});
+
+episodeMoreBtn?.addEventListener('click', () => {
+  visibleEpisodeCount = Math.min(visibleEpisodeCount + EPISODE_BATCH_SIZE, episodes.length);
+  renderEpisodes();
 });
 
 player.volume = Number(volumeBar.value);
