@@ -31,7 +31,7 @@
   </header>
 
   <main>
-    <section id="inicio" class="hero page-anchor">
+    <section id="inicio" class="hero page-anchor home-section">
       <div class="hero-backdrop" aria-hidden="true"></div>
       <div class="shell hero-grid">
         <div class="hero-visual">
@@ -103,7 +103,19 @@
       </div>
     </section>
 
-    <section id="episodios" class="episodes shell page-anchor">
+
+    <section id="comece" class="start-here shell home-section">
+      <div class="section-title start-title">
+        <div>
+          <span>PRIMEIRA ESCUTA</span>
+          <h2>Comece por aqui</h2>
+        </div>
+        <p>Três portas de entrada para entender a frequência do Entre Ruidos.</p>
+      </div>
+      <div id="startGrid" class="start-grid" aria-live="polite"></div>
+    </section>
+
+    <section id="episodios" class="episodes shell page-anchor home-section">
       <div class="section-title">
         <div>
           <span>ÚLTIMOS SINAIS</span>
@@ -137,7 +149,7 @@
       </div>
     </section>
 
-    <section id="sobre" class="about shell page-anchor">
+    <section id="sobre" class="about shell page-anchor home-section">
       <div class="about-card glass">
         <div class="about-intro">
           <span class="mini-label">SOBRE O PODCAST</span>
@@ -150,7 +162,7 @@
       </div>
     </section>
 
-    <section id="contato" class="contact shell page-anchor">
+    <section id="contato" class="contact shell page-anchor home-section">
       <div class="contact-inner">
         <span class="mini-label">CONTATO</span>
         <h2>Tem uma ideia que pode virar conversa?</h2>
@@ -158,6 +170,74 @@
         <a class="email-link" href="mailto:matheus-lo-k@hotmail.com">matheus-lo-k@hotmail.com</a>
       </div>
     </section>
+
+    <section id="episodeDetail" class="episode-detail shell page-anchor" hidden>
+      <button type="button" class="detail-back" id="detailBack">← Voltar aos episódios</button>
+
+      <div class="detail-hero glass">
+        <div class="detail-art-wrap">
+          <img id="detailArt" class="detail-art" src="/assets/cover.png" alt="" />
+        </div>
+
+        <div class="detail-copy">
+          <span class="mini-label" id="detailLabel">EPISÓDIO</span>
+          <h1 id="detailTitle">Entre Ruidos</h1>
+          <div class="detail-meta">
+            <span id="detailDate"></span>
+            <span id="detailDuration"></span>
+          </div>
+          <p id="detailDescription"></p>
+
+          <div class="detail-player" id="detailPlayerPanel">
+            <div class="transport-cluster" aria-label="Controles de reprodução do episódio">
+              <button class="transport-btn skip-btn" id="detailRewind10Btn" type="button" aria-label="Retroceder 10 segundos">
+                <span class="skip-arrow">↶</span><span class="skip-number">10</span>
+              </button>
+              <button class="play detail-play" id="detailPlayBtn" type="button" aria-label="Reproduzir episódio">▶</button>
+              <button class="transport-btn skip-btn" id="detailForward10Btn" type="button" aria-label="Avançar 10 segundos">
+                <span class="skip-number">10</span><span class="skip-arrow">↷</span>
+              </button>
+            </div>
+            <div class="detail-progress">
+              <div class="time-group"><span id="detailCurrentTime">00:00</span><span class="slash">/</span><span id="detailDurationTime">00:00</span></div>
+              <input type="range" id="detailProgressBar" min="0" max="100" step="0.1" value="0" aria-label="Progresso do episódio" />
+            </div>
+            <div class="detail-tools">
+              <button class="player-tool rate-btn" id="detailRateBtn" type="button" aria-label="Alterar velocidade">1x</button>
+              <div class="volume-wrap">
+                <button class="icon-btn" id="detailMuteBtn" type="button" aria-label="Ativar ou desativar som">🔊</button>
+                <input type="range" id="detailVolumeBar" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <a class="small-btn spotify-detail" id="detailSpotify" href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">Spotify</a>
+            <a class="small-btn" id="detailYouTube" href="https://youtube.com/playlist?list=PLf8QBCduvL78&si=oV5GxzkchUBx6HE9" target="_blank" rel="noreferrer">YouTube</a>
+            <button class="small-btn" id="detailDownload" type="button">Baixar</button>
+            <button class="small-btn" id="detailShare" type="button">Compartilhar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-body">
+        <article class="detail-about glass">
+          <span class="mini-label">SOBRE ESTE EPISÓDIO</span>
+          <p id="detailFullDescription"></p>
+        </article>
+
+        <section class="detail-related">
+          <div class="section-title">
+            <div>
+              <span>CONTINUE OUVINDO</span>
+              <h2>Mais episódios</h2>
+            </div>
+          </div>
+          <div id="detailRelated" class="episode-grid"></div>
+        </section>
+      </div>
+    </section>
+
   </main>
 
   <footer class="footer shell">
@@ -171,6 +251,31 @@
       <a href="https://anchor.fm/s/117a3989c/podcast/rss" target="_blank" rel="noreferrer">RSS</a>
     </div>
   </footer>
+
+
+  <div class="mini-player" id="miniPlayer" hidden>
+    <div class="mini-player-inner shell">
+      <div class="mini-copy">
+        <span class="mini-label">TOCANDO AGORA</span>
+        <strong id="miniTitle">Entre Ruidos</strong>
+      </div>
+      <div class="mini-transport">
+        <button class="mini-control" id="miniRewind" type="button" aria-label="Retroceder 10 segundos">↶10</button>
+        <button class="mini-play" id="miniPlay" type="button" aria-label="Reproduzir episódio">▶</button>
+        <button class="mini-control" id="miniForward" type="button" aria-label="Avançar 10 segundos">10↷</button>
+      </div>
+      <div class="mini-progress-wrap">
+        <input type="range" id="miniProgress" min="0" max="100" step="0.1" value="0" aria-label="Progresso do episódio" />
+        <span id="miniTime">00:00 / 00:00</span>
+      </div>
+      <button class="mini-rate" id="miniRate" type="button" aria-label="Alterar velocidade">1x</button>
+      <div class="mini-volume">
+        <button class="mini-mute" id="miniMute" type="button" aria-label="Ativar ou desativar som">🔊</button>
+        <input type="range" id="miniVolume" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
+      </div>
+      <button class="mini-close" id="miniClose" type="button" aria-label="Fechar mini-player">×</button>
+    </div>
+  </div>
 
   <audio id="audioPlayer" preload="metadata"></audio>
   <script src="/script.js"></script>
