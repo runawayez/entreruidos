@@ -28,16 +28,26 @@ const progressBar = document.getElementById('progressBar');
 const volumeBar = document.getElementById('volumeBar');
 const muteBtn = document.getElementById('muteBtn');
 const currentTimeLabel = document.getElementById('currentTime');
-const episodeMoreWrap = document.getElementById('episodeMoreWrap');
-const episodeMoreBtn = document.getElementById('episodeMoreBtn');
+const episodeArchiveCta = document.getElementById('episodeArchiveCta');
+const episodeArchiveBtn = document.getElementById('episodeArchiveBtn');
+const openArchiveTop = document.getElementById('openArchiveTop');
+const episodeArchive = document.getElementById('episodeArchive');
+const archiveList = document.getElementById('archiveList');
+const archiveCount = document.getElementById('archiveCount');
+const episodeSearch = document.getElementById('episodeSearch');
+const archivePrev = document.getElementById('archivePrev');
+const archiveNext = document.getElementById('archiveNext');
+const archivePages = document.getElementById('archivePages');
 
-const INITIAL_EPISODE_COUNT = 2;
-const EPISODE_BATCH_SIZE = 4;
+const HOME_EPISODE_COUNT = 2;
+const ARCHIVE_PAGE_SIZE = 10;
+const FEATURED_DESCRIPTION_LIMIT = 220;
 
 let episodes = [];
-let visibleEpisodeCount = INITIAL_EPISODE_COUNT;
 let currentEpisode = null;
 let rafId = null;
+let archivePage = 1;
+let archiveQuery = '';
 
 function esc(s = '') {
   return String(s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -83,24 +93,30 @@ function parseDuration(value = '') {
   return 0;
 }
 
-function localArtForEpisode(ep = {}) {
-  const slug = slugify(ep.title || '');
-  if (slug.includes('bolha') || slug.includes('realidade')) return '/assets/episode-bolha.png';
-  if (slug.includes('tecnologia')) return '/assets/episode-tech.png';
-  return '/assets/cover.png';
-}
-
 function resolveArt(ep = {}) {
   return ep.image || '/assets/cover.png';
 }
 
-function renderEpisodes() {
-  const items = episodes.slice(0, visibleEpisodeCount);
+function truncateText(value = '', limit = FEATURED_DESCRIPTION_LIMIT) {
+  const text = String(value).replace(/\s+/g, ' ').trim();
+  if (text.length <= limit) return text;
+  const clipped = text.slice(0, limit + 1);
+  const lastSpace = clipped.lastIndexOf(' ');
+  const cutAt = lastSpace > Math.floor(limit * 0.72) ? lastSpace : limit;
+  return `${clipped.slice(0, cutAt).trim()}...`;
+}
+
+function episodeNumber(index) {
+  return String(Math.max(1, episodes.length - index)).padStart(2, '0');
+}
+
+function renderHomeEpisodes() {
+  const items = episodes.slice(0, HOME_EPISODE_COUNT);
 
   grid.innerHTML = items.map((ep, index) => `
     <article class="episode-card">
       <div class="episode-top">
-        <span>EP. ${String(index + 1).padStart(2, '0')}</span>
+        <span>EP. ${episodeNumber(index)}</span>
         <span>${esc(ep.duration || '—')}</span>
       </div>
       <h3>${esc(ep.title)}</h3>
@@ -117,23 +133,122 @@ function renderEpisodes() {
   `).join('');
 
   grid.querySelectorAll('[data-play-index]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const ep = episodes[Number(button.dataset.playIndex)];
-      if (ep) {
-        setFeatured(ep, true);
-        document.getElementById('featuredEpisode')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    });
+    button.addEventListener('click', () => playEpisodeByIndex(Number(button.dataset.playIndex)));
   });
 
-  const hasMore = visibleEpisodeCount < episodes.length;
-  if (episodeMoreWrap) episodeMoreWrap.hidden = !hasMore;
+  const hasArchive = episodes.length > HOME_EPISODE_COUNT;
+  if (episodeArchiveCta) episodeArchiveCta.hidden = !hasArchive;
+  if (openArchiveTop) openArchiveTop.hidden = !hasArchive;
+}
+
+function getFilteredEpisodes() {
+  const query = archiveQuery.trim().toLocaleLowerCase('pt-BR');
+  return episodes
+    .map((ep, index) => ({ ep, index }))
+    .filter(({ ep }) => {
+      if (!query) return true;
+      const haystack = `${ep.title || ''} ${ep.description || ''}`.toLocaleLowerCase('pt-BR');
+      return haystack.includes(query);
+    });
+}
+
+function getPageTokens(totalPages, currentPage) {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+  const tokens = [1];
+  const startPage = Math.max(2, currentPage - 1);
+  const endPage = Math.min(totalPages - 1, currentPage + 1);
+  if (startPage > 2) tokens.push('…');
+  for (let page = startPage; page <= endPage; page += 1) tokens.push(page);
+  if (endPage < totalPages - 1) tokens.push('…');
+  tokens.push(totalPages);
+  return tokens;
+}
+
+function renderArchive() {
+  const filtered = getFilteredEpisodes();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ARCHIVE_PAGE_SIZE));
+  archivePage = Math.min(Math.max(1, archivePage), totalPages);
+
+  const startIndex = (archivePage - 1) * ARCHIVE_PAGE_SIZE;
+  const pageItems = filtered.slice(startIndex, startIndex + ARCHIVE_PAGE_SIZE);
+
+  archiveCount.textContent = archiveQuery
+    ? `${filtered.length} episódio${filtered.length === 1 ? '' : 's'} encontrado${filtered.length === 1 ? '' : 's'}`
+    : `${episodes.length} episódio${episodes.length === 1 ? '' : 's'} no arquivo`;
+
+  if (!pageItems.length) {
+    archiveList.innerHTML = '<div class="archive-empty">Nenhum episódio encontrado para essa busca.</div>';
+  } else {
+    archiveList.innerHTML = pageItems.map(({ ep, index }) => `
+      <article class="archive-item">
+        <span class="archive-number">EP. ${episodeNumber(index)}</span>
+        <div class="archive-main">
+          <h4 class="archive-title">${esc(ep.title)}</h4>
+          <p class="archive-description">${esc(ep.description || '')}</p>
+        </div>
+        <div class="archive-meta">
+          <span>${ep.date ? formatDate(ep.date) : ''}</span>
+          <span>${esc(ep.duration || '—')}</span>
+        </div>
+        <div class="archive-actions">
+          <button type="button" class="small-btn primary" data-archive-play-index="${index}">Ouvir</button>
+          ${ep.link ? `<a class="small-btn" href="${esc(ep.link)}" target="_blank" rel="noreferrer">Abrir</a>` : ''}
+        </div>
+      </article>
+    `).join('');
+  }
+
+  archiveList.querySelectorAll('[data-archive-play-index]').forEach((button) => {
+    button.addEventListener('click', () => playEpisodeByIndex(Number(button.dataset.archivePlayIndex)));
+  });
+
+  archivePrev.disabled = archivePage <= 1;
+  archiveNext.disabled = archivePage >= totalPages;
+  archivePages.innerHTML = getPageTokens(totalPages, archivePage).map((token) => {
+    if (token === '…') return '<span class="archive-ellipsis">…</span>';
+    return `<button type="button" class="archive-page-btn${token === archivePage ? ' active' : ''}" data-page="${token}" aria-label="Ir para a página ${token}" ${token === archivePage ? 'aria-current="page"' : ''}>${token}</button>`;
+  }).join('');
+
+  archivePages.querySelectorAll('[data-page]').forEach((button) => {
+    button.addEventListener('click', () => {
+      archivePage = Number(button.dataset.page);
+      renderArchive();
+      episodeArchive.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+function openArchive({ scroll = true } = {}) {
+  if (!episodeArchive || episodes.length <= HOME_EPISODE_COUNT) return;
+  episodeArchive.hidden = false;
+  if (episodeArchiveBtn) {
+    episodeArchiveBtn.textContent = 'Ocultar arquivo';
+    episodeArchiveBtn.setAttribute('aria-expanded', 'true');
+  }
+  renderArchive();
+  if (scroll) episodeArchive.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeArchive() {
+  if (!episodeArchive) return;
+  episodeArchive.hidden = true;
+  if (episodeArchiveBtn) {
+    episodeArchiveBtn.textContent = 'Ver todos os episódios →';
+    episodeArchiveBtn.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function playEpisodeByIndex(index) {
+  const ep = episodes[index];
+  if (!ep) return;
+  setFeatured(ep, true);
+  document.getElementById('featuredEpisode')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function setFeatured(ep, autoload = false) {
   currentEpisode = ep;
   featuredTitle.textContent = ep.title || 'Novo episódio';
-  featuredDescription.textContent = ep.description || 'Novo episódio do Entre Ruidos.';
+  featuredDescription.textContent = truncateText(ep.description || 'Novo episódio do Entre Ruidos.');
   featuredDuration.textContent = ep.duration || formatTime(parseDuration(ep.duration));
   featuredArt.src = resolveArt(ep);
   featuredArt.alt = `Arte do episódio ${ep.title || ''}`.trim();
@@ -185,8 +300,7 @@ async function loadFeed() {
     episodes = FALLBACK;
   }
 
-  visibleEpisodeCount = INITIAL_EPISODE_COUNT;
-  renderEpisodes();
+  renderHomeEpisodes();
   setFeatured(episodes[0] || FALLBACK[0]);
 }
 
@@ -257,9 +371,26 @@ player.addEventListener('ended', () => {
   currentTimeLabel.textContent = '00:00';
 });
 
-episodeMoreBtn?.addEventListener('click', () => {
-  visibleEpisodeCount = Math.min(visibleEpisodeCount + EPISODE_BATCH_SIZE, episodes.length);
-  renderEpisodes();
+episodeArchiveBtn?.addEventListener('click', () => {
+  if (episodeArchive.hidden) openArchive();
+  else closeArchive();
+});
+openArchiveTop?.addEventListener('click', () => openArchive());
+episodeSearch?.addEventListener('input', (event) => {
+  archiveQuery = event.target.value;
+  archivePage = 1;
+  renderArchive();
+});
+archivePrev?.addEventListener('click', () => {
+  if (archivePage <= 1) return;
+  archivePage -= 1;
+  renderArchive();
+});
+archiveNext?.addEventListener('click', () => {
+  const totalPages = Math.max(1, Math.ceil(getFilteredEpisodes().length / ARCHIVE_PAGE_SIZE));
+  if (archivePage >= totalPages) return;
+  archivePage += 1;
+  renderArchive();
 });
 
 player.volume = Number(volumeBar.value);
