@@ -25,6 +25,12 @@ const featuredDescription = document.getElementById('featuredDescription');
 const featuredDuration = document.getElementById('featuredDuration');
 const featuredArt = document.getElementById('featuredArt');
 const playBtn = document.getElementById('featuredPlay');
+const rewind10Btn = document.getElementById('rewind10Btn');
+const forward10Btn = document.getElementById('forward10Btn');
+const playbackRateBtn = document.getElementById('playbackRateBtn');
+const downloadEpisodeBtn = document.getElementById('downloadEpisodeBtn');
+const shareEpisodeBtn = document.getElementById('shareEpisodeBtn');
+const spotifyEpisodeLink = document.getElementById('spotifyEpisodeLink');
 const progressBar = document.getElementById('progressBar');
 const volumeBar = document.getElementById('volumeBar');
 const muteBtn = document.getElementById('muteBtn');
@@ -48,6 +54,9 @@ let currentEpisode = null;
 let rafId = null;
 let archivePage = 1;
 let archiveQuery = '';
+const PLAYBACK_RATES = [1, 1.5, 2];
+let playbackRateIndex = 0;
+const SPOTIFY_SHOW_URL = 'https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg';
 
 function esc(s = '') {
   return String(s).replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -115,7 +124,6 @@ function renderHomeEpisodes() {
       <p>${esc(ep.description || '')}</p>
       <div class="episode-actions">
         <button type="button" class="small-btn primary" data-play-index="${index}">Ouvir</button>
-        ${ep.link ? `<a class="small-btn" href="${esc(ep.link)}" target="_blank" rel="noreferrer">Abrir</a>` : ''}
       </div>
       <div class="episode-meta">
         <span>${ep.date ? formatDate(ep.date) : ''}</span>
@@ -183,7 +191,6 @@ function renderArchive() {
         </div>
         <div class="archive-actions">
           <button type="button" class="small-btn primary" data-archive-play-index="${index}">Ouvir</button>
-          ${ep.link ? `<a class="small-btn" href="${esc(ep.link)}" target="_blank" rel="noreferrer">Abrir</a>` : ''}
         </div>
       </article>
     `).join('');
@@ -267,6 +274,9 @@ function setFeatured(ep, autoload = false) {
   featuredDuration.textContent = ep.duration || formatTime(parseDuration(ep.duration));
   featuredArt.src = resolveArt(ep);
   featuredArt.alt = `Arte do episódio ${ep.title || ''}`.trim();
+  if (spotifyEpisodeLink) spotifyEpisodeLink.href = ep.spotify || SPOTIFY_SHOW_URL;
+  if (downloadEpisodeBtn) downloadEpisodeBtn.disabled = !ep.audio;
+  player.playbackRate = PLAYBACK_RATES[playbackRateIndex];
 
   if (ep.audio) {
     player.src = ep.audio;
@@ -291,6 +301,72 @@ function resetPlayerUI() {
 
 function updatePlayState() {
   playBtn.textContent = player.paused ? '▶' : 'Ⅱ';
+}
+
+function seekBy(seconds) {
+  const duration = player.duration || parseDuration(currentEpisode?.duration || '');
+  const next = Math.max(0, Math.min(duration || Infinity, (player.currentTime || 0) + seconds));
+  player.currentTime = next;
+  updateProgress();
+}
+
+function safeFilename(value = 'episodio') {
+  return String(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\\/:*?"<>|]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim() || 'episodio';
+}
+
+async function downloadCurrentEpisode() {
+  if (!currentEpisode?.audio || !downloadEpisodeBtn) return;
+
+  const originalText = downloadEpisodeBtn.textContent;
+  downloadEpisodeBtn.disabled = true;
+  downloadEpisodeBtn.textContent = '…';
+
+  try {
+    const response = await fetch(currentEpisode.audio);
+    if (!response.ok) throw new Error('download');
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download = `Entre Ruidos - ${safeFilename(currentEpisode.title)}.mp3`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+  } catch {
+    window.open(currentEpisode.audio, '_blank', 'noopener,noreferrer');
+  } finally {
+    downloadEpisodeBtn.disabled = false;
+    downloadEpisodeBtn.textContent = originalText;
+  }
+}
+
+async function shareCurrentEpisode() {
+  if (!currentEpisode) return;
+  const shareUrl = currentEpisode.spotify || SPOTIFY_SHOW_URL;
+  const shareData = {
+    title: `${currentEpisode.title} — Entre Ruidos`,
+    text: `Ouça "${currentEpisode.title}" no Entre Ruidos.`,
+    url: shareUrl
+  };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      return;
+    }
+    await navigator.clipboard.writeText(`${shareData.text} ${shareUrl}`);
+    if (shareEpisodeBtn) {
+      const original = shareEpisodeBtn.textContent;
+      shareEpisodeBtn.textContent = '✓';
+      setTimeout(() => { shareEpisodeBtn.textContent = original; }, 1400);
+    }
+  } catch {}
 }
 
 function updateProgress() {
@@ -318,6 +394,19 @@ async function loadFeed() {
   renderHomeEpisodes();
   setFeatured(episodes[0] || FALLBACK[0]);
 }
+
+rewind10Btn?.addEventListener('click', () => seekBy(-10));
+forward10Btn?.addEventListener('click', () => seekBy(10));
+
+playbackRateBtn?.addEventListener('click', () => {
+  playbackRateIndex = (playbackRateIndex + 1) % PLAYBACK_RATES.length;
+  const rate = PLAYBACK_RATES[playbackRateIndex];
+  player.playbackRate = rate;
+  playbackRateBtn.textContent = `${rate}x`;
+});
+
+downloadEpisodeBtn?.addEventListener('click', downloadCurrentEpisode);
+shareEpisodeBtn?.addEventListener('click', shareCurrentEpisode);
 
 playBtn.addEventListener('click', async () => {
   if (!currentEpisode?.audio) {
