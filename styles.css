@@ -30,7 +30,7 @@ a{color:inherit} img{max-width:100%;display:block} button,input{font:inherit}.sh
 .hero-backdrop{position:absolute;z-index:-2;inset:0;background:
   linear-gradient(90deg,rgba(7,5,11,.62) 0%,rgba(7,5,11,.20) 38%,rgba(7,5,11,.16) 68%,rgba(7,5,11,.48) 100%),
   linear-gradient(180deg,rgba(7,5,11,.10) 0%,rgba(7,5,11,.04) 46%,#08060c 100%),
-  url('/assets/hero-bg-gospel.jpg?v=3') center 46% / cover no-repeat;
+  url('/assets/hero-bg-cosmic.webp?v=1') center 46% / cover no-repeat;
   filter:saturate(1.15) contrast(1.03) brightness(.92);
   transform:scale(1.015);
 }
