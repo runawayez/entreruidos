@@ -101,20 +101,44 @@
           <span>ÚLTIMOS SINAIS</span>
           <h2>Episódios</h2>
         </div>
-        <a href="https://open.spotify.com/show/2eFMUbMzyoF9zrpsntjlKg" target="_blank" rel="noreferrer">VER TODOS →</a>
+        <button type="button" class="section-text-button" id="openArchiveTop">VER TODOS →</button>
       </div>
       <div id="episodeGrid" class="episode-grid" aria-live="polite"></div>
-      <div class="episode-more-wrap" id="episodeMoreWrap" hidden>
-        <button type="button" class="episode-more-btn" id="episodeMoreBtn" aria-controls="episodeGrid">Ver mais episódios</button>
+      <div class="episode-archive-cta" id="episodeArchiveCta" hidden>
+        <button type="button" class="episode-more-btn" id="episodeArchiveBtn" aria-controls="episodeArchive" aria-expanded="false">Ver todos os episódios →</button>
+      </div>
+
+      <div class="episode-archive" id="episodeArchive" hidden>
+        <div class="archive-head">
+          <div>
+            <span class="mini-label">ARQUIVO DE EPISÓDIOS</span>
+            <h3>Todos os episódios</h3>
+            <p id="archiveCount"></p>
+          </div>
+          <label class="archive-search">
+            <span class="sr-only">Buscar episódio</span>
+            <input id="episodeSearch" type="search" placeholder="Buscar episódio..." autocomplete="off" />
+          </label>
+        </div>
+        <div id="archiveList" class="archive-list" aria-live="polite"></div>
+        <nav class="archive-pagination" aria-label="Paginação dos episódios">
+          <button type="button" class="archive-nav-btn" id="archivePrev">← Anterior</button>
+          <div class="archive-pages" id="archivePages"></div>
+          <button type="button" class="archive-nav-btn" id="archiveNext">Próxima →</button>
+        </nav>
       </div>
     </section>
 
     <section id="sobre" class="about shell page-anchor">
       <div class="about-card glass">
-        <span class="mini-label">SOBRE O PODCAST</span>
-        <h2>Um espaço para sair do ruído e simplesmente escutar.</h2>
-        <p>Entre Ruidos nasceu da vontade de criar um momento em que você possa se desconectar um pouco do mundo, colocar os fones e acompanhar uma reflexão sem pressa. A inspiração passa pela liberdade de conversa de <em>The Midnight Gospel</em>: assuntos existenciais, tecnologia, cotidiano, espiritualidade, dúvidas, contradições e tudo aquilo que continua ecoando quando o resto fica em silêncio.</p>
-        <p>Mais do que respostas prontas, o podcast funciona como um diário falado. São reflexões e desabafos sinceros de um buscador que ainda está aprendendo, mudando de ideia e evoluindo enquanto vive. A proposta é que, por alguns minutos, você não precise organizar todos os pensamentos ao mesmo tempo — apenas ouvir, refletir e talvez encontrar alguma coisa sua no meio desses ruídos.</p>
+        <div class="about-intro">
+          <span class="mini-label">SOBRE O PODCAST</span>
+          <h2>Um espaço para sair do ruído e simplesmente escutar.</h2>
+        </div>
+        <div class="about-copy">
+          <p>Entre Ruidos nasceu da vontade de criar um momento em que você possa se desconectar um pouco do mundo, colocar os fones e acompanhar uma reflexão sem pressa. A inspiração passa pela liberdade de conversa de <em>The Midnight Gospel</em>: assuntos existenciais, tecnologia, cotidiano, espiritualidade, dúvidas, contradições e tudo aquilo que continua ecoando quando o resto fica em silêncio.</p>
+          <p>Mais do que respostas prontas, o podcast funciona como um diário falado. São reflexões e desabafos sinceros de um buscador que ainda está aprendendo, mudando de ideia e evoluindo enquanto vive. A proposta é que, por alguns minutos, você não precise organizar todos os pensamentos ao mesmo tempo — apenas ouvir, refletir e talvez encontrar alguma coisa sua no meio desses ruídos.</p>
+        </div>
       </div>
     </section>
 
