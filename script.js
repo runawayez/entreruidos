@@ -819,12 +819,11 @@ loadFeed();
 
 // Navegação de página única: scroll alinhado ao header e URL sempre limpa.
 (function setupSinglePageNavigation() {
-  const cleanPath = `${window.location.pathname}${window.location.search}`;
   const navLinks = [...document.querySelectorAll('.nav-scroll')];
   const menuLinks = [...document.querySelectorAll('.main-nav .nav-scroll')];
 
   function cleanUrl() {
-    if (window.location.hash) history.replaceState(null, '', cleanPath);
+    if (window.location.hash) history.replaceState(null, '', window.location.pathname || '/');
   }
 
   function setActiveMenu(id) {
@@ -840,9 +839,15 @@ loadFeed();
       const target = document.querySelector(selector);
       if (!target) return;
       event.preventDefault();
-      scrollSectionIntoView(target);
+
+      if (document.body.classList.contains('episode-detail-mode')) {
+        showHome({ push: true, targetId: target.id });
+      } else {
+        scrollSectionIntoView(target);
+        history.replaceState(null, '', '/');
+      }
+
       if (menuLinks.includes(link)) setActiveMenu(target.id);
-      history.replaceState(null, '', cleanPath);
     });
   });
 
