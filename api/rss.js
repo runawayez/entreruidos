@@ -23,7 +23,7 @@ function findSpotifyEpisodeUrl(item = {}) {
   return match?.[0] || '';
 }
 
-function pickImage(item = {}, channel = {}) {
+function pickImage(item = {}) {
   const fromItem =
     item['itunes:image']?.href ||
     item['media:thumbnail']?.url ||
@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
       spotify: findSpotifyEpisodeUrl(item)
         || (String(item.link || '').includes('open.spotify.com/episode/') ? item.link : '')
         || spotifySearchUrl(item.title || `Episódio ${index + 1}`),
-      image: pickImage(item, channel)
+      image: pickImage(item)
     }));
 
     res.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=86400');

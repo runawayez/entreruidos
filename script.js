@@ -366,7 +366,6 @@ function renderRelatedEpisodes(ep) {
     button.addEventListener('click', () => {
       const target = episodes[Number(button.dataset.relatedPlay)];
       if (!target) return;
-      detailEpisode = target;
       populateEpisodeDetail(target);
       setFeatured(target, true);
     });
@@ -467,8 +466,6 @@ function setFeatured(ep, autoload = false) {
   if (miniTitle) miniTitle.textContent = ep.title || 'Entre Ruidos';
   if (spotifyEpisodeLink) spotifyEpisodeLink.href = ep.spotify || SPOTIFY_SHOW_URL;
   if (downloadEpisodeBtn) downloadEpisodeBtn.disabled = !ep.audio;
-  player.playbackRate = PLAYBACK_RATES[playbackRateIndex];
-
   if (ep.audio) {
     player.src = ep.audio;
     player.load();
@@ -798,10 +795,6 @@ loadFeed();
     if (window.location.hash) history.replaceState(null, '', window.location.pathname || '/');
   }
 
-  function setActiveMenu(id) {
-    setHeaderActive(id);
-  }
-
   navLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
       const selector = link.getAttribute('href');
@@ -817,7 +810,7 @@ loadFeed();
         history.replaceState(null, '', '/');
       }
 
-      if (menuLinks.includes(link)) setActiveMenu(target.id);
+      if (menuLinks.includes(link)) setHeaderActive(target.id);
     });
   });
 
@@ -830,7 +823,7 @@ loadFeed();
     activeFrame = null;
 
     if (document.body.classList.contains('episode-detail-mode')) {
-      setActiveMenu('episodios');
+      setHeaderActive('episodios');
       return;
     }
 
@@ -844,7 +837,7 @@ loadFeed();
 
     const nearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 8;
     if (nearBottom) active = document.getElementById('contato') || active;
-    if (active) setActiveMenu(active.id);
+    if (active) setHeaderActive(active.id);
   }
 
   function requestActiveUpdate() {
